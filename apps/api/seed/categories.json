@@ -1,0 +1,194 @@
+[
+  {
+    "slug": "fresh_produce",
+    "name": "Fruits & Vegetables",
+    "nameNe": "फलफूल र तरकारी",
+    "sortOrder": 0,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "dairy",
+    "name": "Dairy & Bread",
+    "nameNe": "दुग्ध पदार्थ",
+    "sortOrder": 1,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "staples",
+    "name": "Atta, Rice, Dal & Oil",
+    "nameNe": "चामल, दाल, पिठो",
+    "sortOrder": 2,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "masala",
+    "name": "Masala & Spices",
+    "nameNe": "मसला",
+    "sortOrder": 3,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "tea_coffee",
+    "name": "Tea & Coffee",
+    "nameNe": "चिया र कफी",
+    "sortOrder": 4,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "instant_food",
+    "name": "Instant Noodles",
+    "nameNe": "चाउचाउ",
+    "sortOrder": 5,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "snacks",
+    "name": "Snacks & Namkeen",
+    "nameNe": "खाजा",
+    "sortOrder": 6,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "biscuits",
+    "name": "Biscuits",
+    "nameNe": "बिस्कुट",
+    "sortOrder": 7,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "beverages",
+    "name": "Cold Drinks & Juices",
+    "nameNe": "पेय पदार्थ",
+    "sortOrder": 8,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "breakfast",
+    "name": "Breakfast & Cereals",
+    "nameNe": "बिहानको खाजा",
+    "sortOrder": 9,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "ready_to_eat",
+    "name": "Ready to Eat",
+    "nameNe": "तयारी खाना",
+    "sortOrder": 10,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "packaged_food",
+    "name": "Pasta, Soups & Mixes",
+    "nameNe": "पास्ता र सुप",
+    "sortOrder": 11,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "dry_fruits",
+    "name": "Dry Fruits & Seeds",
+    "nameNe": "ड्राइ फ्रुट",
+    "sortOrder": 12,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "chocolates",
+    "name": "Chocolates & Sweets",
+    "nameNe": "चकलेट",
+    "sortOrder": 13,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "condiments",
+    "name": "Sauces & Spreads",
+    "nameNe": "सस र जाम",
+    "sortOrder": 14,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "frozen",
+    "name": "Frozen Food",
+    "nameNe": "फ्रोजन खाना",
+    "sortOrder": 15,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "health_drinks",
+    "name": "Health Drinks",
+    "nameNe": "स्वास्थ्य पेय",
+    "sortOrder": 16,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "baby_care",
+    "name": "Baby Care",
+    "nameNe": "बच्चाको हेरचाह",
+    "sortOrder": 17,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "personal_care",
+    "name": "Personal Care",
+    "nameNe": "व्यक्तिगत हेरचाह",
+    "sortOrder": 18,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "oral_care",
+    "name": "Oral Care",
+    "nameNe": "दाँतको हेरचाह",
+    "sortOrder": 19,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "household",
+    "name": "Cleaning & Household",
+    "nameNe": "सरसफाइ",
+    "sortOrder": 20,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "home_utility",
+    "name": "Home & Kitchen",
+    "nameNe": "घर र भान्सा",
+    "sortOrder": 21,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "pet_care",
+    "name": "Pet Care",
+    "nameNe": "घरपालुवा जनावर",
+    "sortOrder": 22,
+    "image": null,
+    "isActive": true
+  },
+  {
+    "slug": "stationery",
+    "name": "Stationery",
+    "nameNe": "स्टेशनरी",
+    "sortOrder": 23,
+    "image": null,
+    "isActive": true
+  }
+]

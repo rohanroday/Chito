@@ -1,0 +1,3628 @@
+[
+  {
+    "slug": "wai-wai-noodles",
+    "name": "Wai Wai Instant Noodles",
+    "category": "instant_food",
+    "unit": "75 g",
+    "mrp": 2000,
+    "price": 2000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "waiwai",
+      "chauchau",
+      "noodles"
+    ],
+    "images": [
+      "images/instant_food/wai-wai-noodles.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "maggi-2-minute-noodles",
+    "name": "Maggi 2-Minute Masala Noodles",
+    "category": "instant_food",
+    "unit": "70 g",
+    "mrp": 1500,
+    "price": 1500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "maggi",
+      "noodles",
+      "chauchau"
+    ],
+    "images": [
+      "images/instant_food/maggi-2-minute-noodles.jpg",
+      "images/instant_food/maggi-noodles-70g.jpg",
+      "images/instant_food/maggi-noodles.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "nissin-top-ramen-curry",
+    "name": "Nissin Top Ramen Curry Noodles",
+    "category": "instant_food",
+    "unit": "70 g",
+    "mrp": 2500,
+    "price": 2500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "ramen",
+      "noodles"
+    ],
+    "images": [
+      "images/instant_food/nissin-top-ramen-curry.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "sunfeast-yippee-magic-masala",
+    "name": "Sunfeast YiPPee! Magic Masala Noodles",
+    "category": "instant_food",
+    "unit": "70 g",
+    "mrp": 1500,
+    "price": 1500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "yippee",
+      "noodles"
+    ],
+    "images": [
+      "images/instant_food/sunfeast-yippee-magic-masala.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "horlicks-classic-malt",
+    "name": "Horlicks Classic Malt",
+    "category": "health_drinks",
+    "unit": "500 g",
+    "mrp": 26500,
+    "price": 26500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "horlicks"
+    ],
+    "images": [
+      "images/health_drinks/horlicks-classic-malt.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "bournvita",
+    "name": "Cadbury Bournvita",
+    "category": "health_drinks",
+    "unit": "500 g",
+    "mrp": 25000,
+    "price": 25000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "bournvita"
+    ],
+    "images": [
+      "images/health_drinks/bournvita.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "colgate-maxfresh",
+    "name": "Colgate MaxFresh Toothpaste",
+    "category": "oral_care",
+    "unit": "150 g",
+    "mrp": 12000,
+    "price": 12000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "toothpaste",
+      "manjan"
+    ],
+    "images": [
+      "images/oral_care/colgate-maxfresh.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "colgate-strong-teeth",
+    "name": "Colgate Strong Teeth Toothpaste",
+    "category": "oral_care",
+    "unit": "200 g",
+    "mrp": 12500,
+    "price": 12500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "toothpaste",
+      "manjan"
+    ],
+    "images": [
+      "images/oral_care/colgate-strong-teeth.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "quaker-oats",
+    "name": "Quaker Oats",
+    "category": "breakfast",
+    "unit": "1 kg",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "oats"
+    ],
+    "images": [
+      "images/breakfast/quaker-oats.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "kelloggs-corn-flakes",
+    "name": "Kellogg's Corn Flakes Original",
+    "category": "breakfast",
+    "unit": "475 g",
+    "mrp": 19500,
+    "price": 19500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cornflakes",
+      "cereal"
+    ],
+    "images": [
+      "images/breakfast/kelloggs-corn-flakes.jpg",
+      "images/breakfast/kelloggs-corn-flakes-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "kelloggs-chocos",
+    "name": "Kellogg's Chocos",
+    "category": "breakfast",
+    "unit": "375 g",
+    "mrp": 19000,
+    "price": 19000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chocos",
+      "cereal"
+    ],
+    "images": [
+      "images/breakfast/kelloggs-chocos.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "yoga-bar-muesli",
+    "name": "Yoga Bar Fruit & Nut Muesli",
+    "category": "breakfast",
+    "unit": "400 g",
+    "mrp": 29900,
+    "price": 29900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "muesli"
+    ],
+    "images": [
+      "images/breakfast/yoga-bar-muesli.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "baggys-white-oats",
+    "name": "Bagrry's White Oats",
+    "category": "breakfast",
+    "unit": "1 kg",
+    "mrp": 18500,
+    "price": 18500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "oats"
+    ],
+    "images": [
+      "images/breakfast/baggys-white-oats.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "aashirvaad-atta",
+    "name": "Aashirvaad Shudh Chakki Atta",
+    "category": "staples",
+    "unit": "5 kg",
+    "mrp": 29000,
+    "price": 29000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "atta",
+      "aata",
+      "pitho",
+      "flour"
+    ],
+    "images": [
+      "images/staples/aashirvaad-atta.jpg",
+      "images/staples/aashirvaad-atta-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fortune-chakki-fresh-atta",
+    "name": "Fortune Chakki Fresh Atta",
+    "category": "staples",
+    "unit": "5 kg",
+    "mrp": 26500,
+    "price": 26500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "atta",
+      "aata",
+      "pitho",
+      "flour"
+    ],
+    "images": [
+      "images/staples/fortune-chakki-fresh-atta.jpg",
+      "images/staples/fortune-atta-duplicate.jpg",
+      "images/staples_dairy/138_fortune_chakki_fresh_atta.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "india-gate-dubar",
+    "name": "India Gate Dubar Basmati Rice",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 12000,
+    "price": 12000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chamal",
+      "chawal",
+      "rice",
+      "basmati"
+    ],
+    "images": [
+      "images/staples/india-gate-dubar.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "india-gate-everyday-basmati",
+    "name": "India Gate Everyday Basmati Rice",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chamal",
+      "chawal",
+      "rice",
+      "basmati"
+    ],
+    "images": [
+      "images/staples/india-gate-everyday-basmati.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "india-gate-super-basmati",
+    "name": "India Gate Super Basmati Rice",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chamal",
+      "chawal",
+      "rice",
+      "basmati"
+    ],
+    "images": [
+      "images/staples/india-gate-super-basmati.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "aashirvaad-iodised-salt",
+    "name": "Aashirvaad Iodised Salt",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 2800,
+    "price": 2800,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "nun",
+      "namak",
+      "salt"
+    ],
+    "images": [
+      "images/staples/aashirvaad-iodised-salt.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-salt",
+    "name": "Tata Salt",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 2800,
+    "price": 2800,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "nun",
+      "namak",
+      "salt"
+    ],
+    "images": [
+      "images/staples/tata-salt.jpg",
+      "images/staples/tata-salt-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-moong-dal",
+    "name": "Tata Sampann Moong Dal",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 17500,
+    "price": 17500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dal",
+      "moong",
+      "mung"
+    ],
+    "images": [
+      "images/staples/tata-sampann-moong-dal.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-toor-dal",
+    "name": "Tata Sampann Toor Dal",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 19500,
+    "price": 19500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dal",
+      "arhar",
+      "rahar"
+    ],
+    "images": [
+      "images/staples/tata-sampann-toor-dal.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-besan",
+    "name": "Tata Sampann Besan",
+    "category": "staples",
+    "unit": "500 g",
+    "mrp": 7500,
+    "price": 7500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "besan",
+      "gram flour"
+    ],
+    "images": [
+      "images/staples/tata-sampann-besan.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fortune-sunlite-oil",
+    "name": "Fortune Sunlite Refined Sunflower Oil",
+    "category": "staples",
+    "unit": "1 L",
+    "mrp": 16500,
+    "price": 16500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "tel",
+      "oil",
+      "sunflower"
+    ],
+    "images": [
+      "images/staples/fortune-sunlite-oil.jpg",
+      "images/staples/fortune-sunlite-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "saffola-gold-oil",
+    "name": "Saffola Gold Edible Oil",
+    "category": "staples",
+    "unit": "1 L",
+    "mrp": 21000,
+    "price": 21000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "tel",
+      "oil"
+    ],
+    "images": [
+      "images/staples/saffola-gold-oil.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "bingo-tedhe-medhe",
+    "name": "Bingo Tedhe Medhe Masala Tadka",
+    "category": "snacks",
+    "unit": "90 g",
+    "mrp": 2000,
+    "price": 2000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "bingo",
+      "chips"
+    ],
+    "images": [
+      "images/snacks/bingo-tedhe-medhe.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "lays-classic-salted",
+    "name": "Lay's Classic Salted Chips",
+    "category": "snacks",
+    "unit": "52 g",
+    "mrp": 2000,
+    "price": 2000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "lays",
+      "chips"
+    ],
+    "images": [
+      "images/snacks/lays-classic-salted.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "haldirams-bhujia-sev",
+    "name": "Haldiram's Bhujia Sev",
+    "category": "snacks",
+    "unit": "400 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "bhujia",
+      "namkeen"
+    ],
+    "images": [
+      "images/snacks/haldirams-bhujia-sev.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "haldirams-aloo-bhujia",
+    "name": "Haldiram's Aloo Bhujia",
+    "category": "snacks",
+    "unit": "400 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "bhujia",
+      "namkeen",
+      "aloo"
+    ],
+    "images": [
+      "images/snacks/haldirams-aloo-bhujia.jpg",
+      "images/snacks/haldirams-aloo-bhujia-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "amul-paneer-fresh-soft",
+    "name": "Amul Fresh Paneer",
+    "category": "dairy",
+    "unit": "200 g",
+    "mrp": 9000,
+    "price": 9000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "paneer",
+      "cheese"
+    ],
+    "images": [
+      "images/dairy/amul-paneer-fresh-soft.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "amul-taaza-milk",
+    "name": "Amul Taaza Toned Milk",
+    "category": "dairy",
+    "unit": "500 ml",
+    "mrp": 2700,
+    "price": 2700,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dudh",
+      "doodh",
+      "milk"
+    ],
+    "images": [
+      "images/dairy/amul-taaza-milk.jpg",
+      "images/dairy/amul-taaza-milk-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mother-dairy-paneer",
+    "name": "Mother Dairy Paneer",
+    "category": "dairy",
+    "unit": "200 g",
+    "mrp": 9500,
+    "price": 9500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "paneer"
+    ],
+    "images": [
+      "images/dairy/mother-dairy-paneer.jpg",
+      "images/dairy/mother-dairy-paneer-2.jpg",
+      "images/dairy/mother-dairy-paneer-200g.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mother-dairy-classic-curd",
+    "name": "Mother Dairy Classic Dahi",
+    "category": "dairy",
+    "unit": "400 g",
+    "mrp": 5000,
+    "price": 5000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dahi",
+      "curd"
+    ],
+    "images": [
+      "images/dairy/mother-dairy-classic-curd.jpg",
+      "images/dairy/mother-dairy-classic-curd-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "amul-fresh-cream",
+    "name": "Amul Fresh Cream",
+    "category": "dairy",
+    "unit": "250 ml",
+    "mrp": 7000,
+    "price": 7000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cream",
+      "malai"
+    ],
+    "images": [
+      "images/dairy/amul-fresh-cream.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "amul-masti-buttermilk",
+    "name": "Amul Masti Spiced Buttermilk",
+    "category": "dairy",
+    "unit": "200 ml",
+    "mrp": 1500,
+    "price": 1500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "mohi",
+      "chaas",
+      "buttermilk"
+    ],
+    "images": [
+      "images/dairy/amul-masti-buttermilk.jpg",
+      "images/dairy/amul-masti-buttermilk-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "amul-butter",
+    "name": "Amul Pasteurised Butter",
+    "category": "dairy",
+    "unit": "100 g",
+    "mrp": 6000,
+    "price": 6000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "makhan",
+      "butter"
+    ],
+    "images": [
+      "images/dairy/amul-butter.jpg",
+      "images/dairy/amul-butter-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "amul-cheese-cubes",
+    "name": "Amul Cheese Cubes",
+    "category": "dairy",
+    "unit": "200 g",
+    "mrp": 13500,
+    "price": 13500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cheese"
+    ],
+    "images": [
+      "images/dairy/amul-cheese-cubes.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "thums-up-750ml",
+    "name": "Thums Up",
+    "category": "beverages",
+    "unit": "750 ml",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cold drink",
+      "soft drink"
+    ],
+    "images": [
+      "images/beverages/thums-up-750ml.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "coca-cola-750ml",
+    "name": "Coca-Cola",
+    "category": "beverages",
+    "unit": "750 ml",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "coke",
+      "cold drink"
+    ],
+    "images": [
+      "images/beverages/coca-cola-750ml.jpg",
+      "images/beverages/coca-cola-750ml-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "real-mixed-fruit-1l",
+    "name": "Real Mixed Fruit Juice",
+    "category": "beverages",
+    "unit": "1 L",
+    "mrp": 13000,
+    "price": 13000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "juice"
+    ],
+    "images": [
+      "images/beverages/real-mixed-fruit-1l.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "frooti-600ml",
+    "name": "Frooti Mango Drink",
+    "category": "beverages",
+    "unit": "600 ml",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "frooti",
+      "mango"
+    ],
+    "images": [
+      "images/beverages/frooti-600ml.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "maaza-mango",
+    "name": "Maaza Mango Drink",
+    "category": "beverages",
+    "unit": "600 ml",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "maaza",
+      "mango"
+    ],
+    "images": [
+      "images/beverages/maaza-mango.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tropicana-orange-juice",
+    "name": "Tropicana Orange Juice",
+    "category": "beverages",
+    "unit": "1 L",
+    "mrp": 13500,
+    "price": 13500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "juice",
+      "orange",
+      "suntala"
+    ],
+    "images": [
+      "images/beverages/tropicana-orange-juice.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "paper-boat-aamras",
+    "name": "Paper Boat Aamras",
+    "category": "beverages",
+    "unit": "200 ml",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "aamras",
+      "mango"
+    ],
+    "images": [
+      "images/beverages/paper-boat-aamras.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "bisleri-water",
+    "name": "Bisleri Packaged Drinking Water",
+    "category": "beverages",
+    "unit": "1 L",
+    "mrp": 2000,
+    "price": 2000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "pani",
+      "water"
+    ],
+    "images": [
+      "images/beverages/bisleri-water.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "safal-frozen-green-peas",
+    "name": "Safal Frozen Green Peas",
+    "category": "frozen",
+    "unit": "500 g",
+    "mrp": 11500,
+    "price": 11500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "matar",
+      "kerau",
+      "peas"
+    ],
+    "images": [
+      "images/frozen/safal-frozen-green-peas.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "haldirams-aloo-paratha",
+    "name": "Haldiram's Aloo Paratha",
+    "category": "frozen",
+    "unit": "400 g",
+    "mrp": 14000,
+    "price": 14000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "paratha"
+    ],
+    "images": [
+      "images/frozen/haldirams-aloo-paratha.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mccain-french-fries",
+    "name": "McCain French Fries",
+    "category": "frozen",
+    "unit": "420 g",
+    "mrp": 12500,
+    "price": 12500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "fries"
+    ],
+    "images": [
+      "images/frozen/mccain-french-fries.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "kinder-joy",
+    "name": "Kinder Joy",
+    "category": "chocolates",
+    "unit": "20 g",
+    "mrp": 4500,
+    "price": 4500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chocolate"
+    ],
+    "images": [
+      "images/chocolates/kinder-joy.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cadbury-5-star",
+    "name": "Cadbury 5 Star",
+    "category": "chocolates",
+    "unit": "40 g",
+    "mrp": 2000,
+    "price": 2000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chocolate",
+      "5star"
+    ],
+    "images": [
+      "images/chocolates/cadbury-5-star.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cadbury-dairy-milk",
+    "name": "Cadbury Dairy Milk",
+    "category": "chocolates",
+    "unit": "50 g",
+    "mrp": 5000,
+    "price": 5000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chocolate",
+      "dairy milk"
+    ],
+    "images": [
+      "images/chocolates/cadbury-dairy-milk.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "ferrero-rocher",
+    "name": "Ferrero Rocher (16 pcs)",
+    "category": "chocolates",
+    "unit": "200 g",
+    "mrp": 65000,
+    "price": 65000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chocolate",
+      "gift"
+    ],
+    "images": [
+      "images/chocolates/ferrero-rocher.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "kitkat",
+    "name": "Nestlé KitKat",
+    "category": "chocolates",
+    "unit": "38.5 g",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chocolate"
+    ],
+    "images": [
+      "images/chocolates/kitkat.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "harpic-power-plus",
+    "name": "Harpic Power Plus Toilet Cleaner",
+    "category": "household",
+    "unit": "500 ml",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "toilet cleaner"
+    ],
+    "images": [
+      "images/household/harpic-power-plus.jpg",
+      "images/household/harpic-power-plus-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "ariel-matic",
+    "name": "Ariel Matic Detergent Powder",
+    "category": "household",
+    "unit": "1 kg",
+    "mrp": 33000,
+    "price": 33000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "detergent",
+      "surf",
+      "sabun"
+    ],
+    "images": [
+      "images/household/ariel-matic.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "vim-lemon-dishwash",
+    "name": "Vim Lemon Dishwash Liquid",
+    "category": "household",
+    "unit": "500 ml",
+    "mrp": 11500,
+    "price": 11500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dishwash",
+      "bartan"
+    ],
+    "images": [
+      "images/household/vim-lemon-dishwash.jpg",
+      "images/household/vim-lemon-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "colin-glass-cleaner",
+    "name": "Colin Glass & Surface Cleaner",
+    "category": "household",
+    "unit": "500 ml",
+    "mrp": 11500,
+    "price": 11500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "glass cleaner"
+    ],
+    "images": [
+      "images/household/colin-glass-cleaner.jpg",
+      "images/household/colin-glass-cleaner-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "surf-excel-matic-front-load",
+    "name": "Surf Excel Matic Front Load",
+    "category": "household",
+    "unit": "1 kg",
+    "mrp": 32500,
+    "price": 32500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "detergent",
+      "surf"
+    ],
+    "images": [
+      "images/household/surf-excel-matic-front-load.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "lifebuoy-total-10-handwash",
+    "name": "Lifebuoy Total 10 Hand Wash",
+    "category": "personal_care",
+    "unit": "190 ml",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "handwash"
+    ],
+    "images": [
+      "images/personal_care/lifebuoy-total-10-handwash.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "dove-daily-shine-shampoo",
+    "name": "Dove Daily Shine Shampoo",
+    "category": "personal_care",
+    "unit": "180 ml",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "shampoo"
+    ],
+    "images": [
+      "images/personal_care/dove-daily-shine-shampoo.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "nivea-soft-cream",
+    "name": "Nivea Soft Moisturising Cream",
+    "category": "personal_care",
+    "unit": "100 ml",
+    "mrp": 23000,
+    "price": 23000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cream",
+      "moisturiser"
+    ],
+    "images": [
+      "images/personal_care/nivea-soft-cream.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "himalaya-neem-face-wash",
+    "name": "Himalaya Purifying Neem Face Wash",
+    "category": "personal_care",
+    "unit": "100 ml",
+    "mrp": 16500,
+    "price": 16500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "face wash"
+    ],
+    "images": [
+      "images/personal_care/himalaya-neem-face-wash.jpg",
+      "images/skincare/123_himalaya_neem_face_wash.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "parachute-coconut-oil",
+    "name": "Parachute Coconut Oil",
+    "category": "personal_care",
+    "unit": "250 ml",
+    "mrp": 12000,
+    "price": 12000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "coconut oil",
+      "kapal tel"
+    ],
+    "images": [
+      "images/personal_care/parachute-coconut-oil.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "santoor-sandal-turmeric",
+    "name": "Santoor Sandal & Turmeric Soap",
+    "category": "personal_care",
+    "unit": "4 x 100 g",
+    "mrp": 17000,
+    "price": 17000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "sabun",
+      "soap"
+    ],
+    "images": [
+      "images/personal_care/santoor-sandal-turmeric.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "clinic-plus-strong-long",
+    "name": "Clinic Plus Strong & Long Shampoo",
+    "category": "personal_care",
+    "unit": "175 ml",
+    "mrp": 13000,
+    "price": 13000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "shampoo"
+    ],
+    "images": [
+      "images/personal_care/clinic-plus-strong-long.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "head-shoulders-classic-clean",
+    "name": "Head & Shoulders Classic Clean Shampoo",
+    "category": "personal_care",
+    "unit": "180 ml",
+    "mrp": 21000,
+    "price": 21000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "shampoo",
+      "dandruff"
+    ],
+    "images": [
+      "images/personal_care/head-shoulders-classic-clean.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "dove-beauty-bar",
+    "name": "Dove Cream Beauty Bathing Bar",
+    "category": "personal_care",
+    "unit": "100 g",
+    "mrp": 6500,
+    "price": 6500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "sabun",
+      "soap"
+    ],
+    "images": [
+      "images/personal_care/dove-beauty-bar.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "dettol-original-handwash",
+    "name": "Dettol Original Hand Wash",
+    "category": "personal_care",
+    "unit": "200 ml",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "handwash"
+    ],
+    "images": [
+      "images/personal_care/dettol-original-handwash.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "bru-instant-coffee",
+    "name": "Bru Instant Coffee",
+    "category": "tea_coffee",
+    "unit": "100 g",
+    "mrp": 24500,
+    "price": 24500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "coffee"
+    ],
+    "images": [
+      "images/tea_coffee/bru-instant-coffee.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "brooke-bond-red-label",
+    "name": "Brooke Bond Red Label Tea",
+    "category": "tea_coffee",
+    "unit": "500 g",
+    "mrp": 28500,
+    "price": 28500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chiya",
+      "chai",
+      "tea"
+    ],
+    "images": [
+      "images/tea_coffee/brooke-bond-red-label.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "nescafe-classic",
+    "name": "Nescafé Classic Instant Coffee",
+    "category": "tea_coffee",
+    "unit": "50 g",
+    "mrp": 19500,
+    "price": 19500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "coffee"
+    ],
+    "images": [
+      "images/tea_coffee/nescafe-classic.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-tea-gold",
+    "name": "Tata Tea Gold",
+    "category": "tea_coffee",
+    "unit": "500 g",
+    "mrp": 33000,
+    "price": 33000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chiya",
+      "chai",
+      "tea"
+    ],
+    "images": [
+      "images/tea_coffee/tata-tea-gold.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "britannia-nutrichoice-digestive",
+    "name": "Britannia NutriChoice Digestive",
+    "category": "biscuits",
+    "unit": "250 g",
+    "mrp": 7000,
+    "price": 7000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "biscuit"
+    ],
+    "images": [
+      "images/biscuits/britannia-nutrichoice-digestive.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "britannia-bourbon",
+    "name": "Britannia Bourbon",
+    "category": "biscuits",
+    "unit": "150 g",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "biscuit"
+    ],
+    "images": [
+      "images/biscuits/britannia-bourbon.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "oreo-original",
+    "name": "Cadbury Oreo Original",
+    "category": "biscuits",
+    "unit": "120 g",
+    "mrp": 3500,
+    "price": 3500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "biscuit",
+      "oreo"
+    ],
+    "images": [
+      "images/biscuits/oreo-original.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "parle-g-biscuits",
+    "name": "Parle-G Biscuits",
+    "category": "biscuits",
+    "unit": "250 g",
+    "mrp": 2500,
+    "price": 2500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "biscuit",
+      "parle"
+    ],
+    "images": [
+      "images/biscuits/parle-g-biscuits.jpg",
+      "images/biscuits/parle-g-biscuits-2.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "britannia-marie-gold",
+    "name": "Britannia Marie Gold",
+    "category": "biscuits",
+    "unit": "250 g",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "biscuit",
+      "marie"
+    ],
+    "images": [
+      "images/biscuits/britannia-marie-gold.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "kissan-tomato-ketchup",
+    "name": "Kissan Fresh Tomato Ketchup",
+    "category": "condiments",
+    "unit": "950 g",
+    "mrp": 16000,
+    "price": 16000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "ketchup",
+      "sauce"
+    ],
+    "images": [
+      "images/condiments/kissan-tomato-ketchup.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "veeba-eggless-mayo",
+    "name": "Veeba Eggless Mayonnaise",
+    "category": "condiments",
+    "unit": "250 g",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "mayo"
+    ],
+    "images": [
+      "images/condiments/veeba-eggless-mayo.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "kissan-mixed-fruit-jam",
+    "name": "Kissan Mixed Fruit Jam",
+    "category": "condiments",
+    "unit": "500 g",
+    "mrp": 18000,
+    "price": 18000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "jam"
+    ],
+    "images": [
+      "images/condiments/kissan-mixed-fruit-jam.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "maggi-hot-sweet-sauce",
+    "name": "Maggi Hot & Sweet Tomato Chilli Sauce",
+    "category": "condiments",
+    "unit": "400 g",
+    "mrp": 14000,
+    "price": 14000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "sauce"
+    ],
+    "images": [
+      "images/condiments/maggi-hot-sweet-sauce.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "gits-khaman-dhokla-mix",
+    "name": "Gits Khaman Dhokla Mix",
+    "category": "packaged_food",
+    "unit": "200 g",
+    "mrp": 8500,
+    "price": 8500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dhokla",
+      "mix"
+    ],
+    "images": [
+      "images/packaged_food/101_gits_khaman_mix.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mtr-gulab-jamun-mix",
+    "name": "MTR Gulab Jamun Mix",
+    "category": "packaged_food",
+    "unit": "175 g",
+    "mrp": 12000,
+    "price": 12000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "gulab jamun",
+      "mithai",
+      "mix"
+    ],
+    "images": [
+      "images/packaged_food/102_mtr_gulab_jamun_mix.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "pillsbury-chakki-fresh-atta",
+    "name": "Pillsbury Chakki Fresh Atta",
+    "category": "staples",
+    "unit": "5 kg",
+    "mrp": 27500,
+    "price": 27500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "atta",
+      "aata",
+      "pitho",
+      "flour"
+    ],
+    "images": [
+      "images/packaged_food/103_pillsbury_chakki_fresh_atta.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fortune-suji-rava",
+    "name": "Fortune Suji / Rava",
+    "category": "staples",
+    "unit": "500 g",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "suji",
+      "sooji",
+      "rava",
+      "semolina"
+    ],
+    "images": [
+      "images/packaged_food/104_fortune_suji_rava.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "barilla-penne-rigate",
+    "name": "Barilla Penne Rigate Pasta",
+    "category": "packaged_food",
+    "unit": "500 g",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "pasta",
+      "penne"
+    ],
+    "images": [
+      "images/packaged_food/105_barilla_penne_rigate.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "del-monte-spaghetti",
+    "name": "Del Monte Spaghetti",
+    "category": "packaged_food",
+    "unit": "500 g",
+    "mrp": 13000,
+    "price": 13000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "pasta",
+      "spaghetti"
+    ],
+    "images": [
+      "images/packaged_food/106_del_monte_spaghetti.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "knorr-sweet-corn-veg-soup",
+    "name": "Knorr Sweet Corn Vegetable Soup",
+    "category": "packaged_food",
+    "unit": "44 g",
+    "mrp": 6500,
+    "price": 6500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "soup",
+      "sweet corn"
+    ],
+    "images": [
+      "images/packaged_food/107_knorr_sweet_corn_vegetable_soup.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "maggi-pazzta-cheese-macaroni",
+    "name": "Maggi Pazzta Cheese Macaroni",
+    "category": "packaged_food",
+    "unit": "64 g",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "pasta",
+      "macaroni",
+      "maggi"
+    ],
+    "images": [
+      "images/packaged_food/108_maggi_pazzta_cheese_macaroni.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fiama-blackcurrant-shower-gel",
+    "name": "Fiama Blackcurrant & Bearberry Shower Gel",
+    "category": "personal_care",
+    "unit": "250 ml",
+    "mrp": 24900,
+    "price": 24900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "body wash",
+      "shower gel"
+    ],
+    "images": [
+      "images/personal_care/109_fiama_blackcurrant_bearberry_shower_gel.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "loreal-hyaluron-moisture-shampoo",
+    "name": "L'Oréal Paris Hyaluron Moisture Shampoo",
+    "category": "personal_care",
+    "unit": "180 ml",
+    "mrp": 26900,
+    "price": 26900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "shampoo",
+      "loreal"
+    ],
+    "images": [
+      "images/personal_care/110_loreal_hyaluron_moisture_shampoo.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "dove-intense-repair-conditioner",
+    "name": "Dove Intense Repair Conditioner",
+    "category": "personal_care",
+    "unit": "180 ml",
+    "mrp": 24500,
+    "price": 24500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "conditioner"
+    ],
+    "images": [
+      "images/personal_care/111_dove_intense_repair_conditioner.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "nivea-sun-spf50",
+    "name": "Nivea Sun Protect & Moisture SPF 50",
+    "category": "personal_care",
+    "unit": "75 ml",
+    "mrp": 39900,
+    "price": 39900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "sunscreen",
+      "sun cream"
+    ],
+    "images": [
+      "images/personal_care/112_nivea_sun_protect_moisture_spf50.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "sensodyne-rapid-relief",
+    "name": "Sensodyne Rapid Relief Toothpaste",
+    "category": "oral_care",
+    "unit": "80 g",
+    "mrp": 21000,
+    "price": 21000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "toothpaste",
+      "manjan",
+      "sensitive"
+    ],
+    "images": [
+      "images/oral_care/113_sensodyne_rapid_relief.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "oral-b-pro-health-crossaction",
+    "name": "Oral-B Pro-Health CrossAction Toothbrush",
+    "category": "oral_care",
+    "unit": "1 pc",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "toothbrush",
+      "brush"
+    ],
+    "images": [
+      "images/oral_care/114_oral_b_pro_health_crossaction.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "closeup-ever-fresh",
+    "name": "Closeup Ever Fresh Toothpaste",
+    "category": "oral_care",
+    "unit": "150 g",
+    "mrp": 12000,
+    "price": 12000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "toothpaste",
+      "manjan"
+    ],
+    "images": [
+      "images/oral_care/115_closeup_ever_fresh.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "listerine-cool-mint",
+    "name": "Listerine Cool Mint Mouthwash",
+    "category": "oral_care",
+    "unit": "250 ml",
+    "mrp": 18500,
+    "price": 18500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "mouthwash"
+    ],
+    "images": [
+      "images/oral_care/116_listerine_cool_mint.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fresh-tomatoes",
+    "name": "Fresh Tomatoes",
+    "category": "fresh_produce",
+    "unit": "500 g",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "golbheda",
+      "tamatar",
+      "tomato"
+    ],
+    "images": [
+      "images/fresh_produce/117_fresh_tomatoes.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "green-capsicum",
+    "name": "Green Capsicum",
+    "category": "fresh_produce",
+    "unit": "250 g",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "bhede khursani",
+      "shimla mirch",
+      "capsicum"
+    ],
+    "images": [
+      "images/fresh_produce/118_green_capsicum.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "bananas",
+    "name": "Bananas (Robusta)",
+    "category": "fresh_produce",
+    "unit": "6 pcs",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "kera",
+      "kela",
+      "banana"
+    ],
+    "images": [
+      "images/fresh_produce/119_bananas.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "broccoli",
+    "name": "Broccoli",
+    "category": "fresh_produce",
+    "unit": "1 pc (approx. 300 g)",
+    "mrp": 6000,
+    "price": 6000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "broccoli",
+      "tarkari"
+    ],
+    "images": [
+      "images/fresh_produce/120_broccoli.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cetaphil-moisturising-cream",
+    "name": "Cetaphil Moisturising Cream",
+    "category": "personal_care",
+    "unit": "80 g",
+    "mrp": 45000,
+    "price": 45000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "moisturiser",
+      "cream"
+    ],
+    "images": [
+      "images/skincare/121_cetaphil_moisturising_cream.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "ponds-super-light-gel",
+    "name": "Pond's Super Light Gel Moisturiser",
+    "category": "personal_care",
+    "unit": "50 g",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "moisturiser",
+      "gel"
+    ],
+    "images": [
+      "images/skincare/122_ponds_super_light_gel.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "vaseline-deep-restore-lotion",
+    "name": "Vaseline Deep Restore Body Lotion",
+    "category": "personal_care",
+    "unit": "200 ml",
+    "mrp": 22500,
+    "price": 22500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "lotion",
+      "body lotion"
+    ],
+    "images": [
+      "images/skincare/124_vaseline_deep_restore_lotion.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "milton-thermosteel-flask",
+    "name": "Milton Thermosteel Flask",
+    "category": "home_utility",
+    "unit": "500 ml",
+    "mrp": 79900,
+    "price": 79900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "flask",
+      "bottle",
+      "thermos"
+    ],
+    "images": [
+      "images/home_utility/125_milton_thermosteel_bottle.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cello-klip-n-store-containers",
+    "name": "Cello Klip N Store Containers",
+    "category": "home_utility",
+    "unit": "Set of 3",
+    "mrp": 29900,
+    "price": 29900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "container",
+      "dabba"
+    ],
+    "images": [
+      "images/home_utility/126_cello_klip_n_store_containers.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "scotch-brite-floor-wiper",
+    "name": "Scotch-Brite Premium Floor Wiper",
+    "category": "home_utility",
+    "unit": "1 pc",
+    "mrp": 32900,
+    "price": 32900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "wiper",
+      "pochha"
+    ],
+    "images": [
+      "images/home_utility/127_scotch_brite_premium_floor_wiper.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "ezee-liquid-detergent",
+    "name": "Ezee Liquid Detergent",
+    "category": "household",
+    "unit": "500 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "detergent",
+      "woollen wash"
+    ],
+    "images": [
+      "images/home_utility/128_ezee_liquid_detergent.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "priya-mango-pickle-garlic",
+    "name": "Priya Mango Pickle (with Garlic)",
+    "category": "condiments",
+    "unit": "300 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "achar",
+      "pickle",
+      "aanp"
+    ],
+    "images": [
+      "images/condiments/129_priya_mango_pickle_garlic.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mothers-recipe-mixed-pickle",
+    "name": "Mother's Recipe Mixed Pickle",
+    "category": "condiments",
+    "unit": "300 g",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "achar",
+      "pickle"
+    ],
+    "images": [
+      "images/condiments/130_mothers_recipe_mixed_pickle.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "funfoods-pizza-pasta-sauce",
+    "name": "Dr. Oetker FunFoods Pizza & Pasta Sauce",
+    "category": "condiments",
+    "unit": "325 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "sauce",
+      "pizza sauce"
+    ],
+    "images": [
+      "images/condiments/131_dr_oetker_funfoods_pizza_pasta_sauce.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "kissan-tomato-ketchup-pouch",
+    "name": "Kissan Fresh Tomato Ketchup (Pouch)",
+    "category": "condiments",
+    "unit": "950 g",
+    "mrp": 12500,
+    "price": 12500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "ketchup",
+      "sauce"
+    ],
+    "images": [
+      "images/condiments/132_kissan_fresh_tomato_ketchup_pouch.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "classmate-pulse-notebook",
+    "name": "Classmate Pulse Notebook (Single Line)",
+    "category": "stationery",
+    "unit": "172 pages",
+    "mrp": 6500,
+    "price": 6500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "copy",
+      "kapi",
+      "notebook"
+    ],
+    "images": [
+      "images/stationery/133_classmate_pulse_notebook.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cello-butterflow-blue-pens",
+    "name": "Cello Butterflow Blue Pens",
+    "category": "stationery",
+    "unit": "Pack of 5",
+    "mrp": 5000,
+    "price": 5000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "pen",
+      "kalam"
+    ],
+    "images": [
+      "images/stationery/134_cello_butterflow_blue_pens.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fevicol-mr-glue",
+    "name": "Fevicol MR Glue",
+    "category": "stationery",
+    "unit": "50 g",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "glue",
+      "gum"
+    ],
+    "images": [
+      "images/stationery/135_fevicol_mr_glue.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "camlin-scholar-geometry-box",
+    "name": "Camlin Scholar Geometry Box",
+    "category": "stationery",
+    "unit": "1 set",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "geometry box",
+      "compass"
+    ],
+    "images": [
+      "images/stationery/136_camlin_scholar_geometry_box.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-poha",
+    "name": "Tata Sampann Poha",
+    "category": "staples",
+    "unit": "500 g",
+    "mrp": 5500,
+    "price": 5500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chiura",
+      "poha",
+      "beaten rice"
+    ],
+    "images": [
+      "images/staples_dairy/137_tata_sampann_poha.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "amul-lassi",
+    "name": "Amul Lassi",
+    "category": "dairy",
+    "unit": "200 ml",
+    "mrp": 2500,
+    "price": 2500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "lassi",
+      "dahi"
+    ],
+    "images": [
+      "images/staples_dairy/139_amul_lassi.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "nandini-curd",
+    "name": "Nandini Curd",
+    "category": "dairy",
+    "unit": "500 g",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dahi",
+      "curd"
+    ],
+    "images": [
+      "images/staples_dairy/140_nandini_curd.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "pedigree-dentastix-small",
+    "name": "Pedigree Dentastix (Small Breed)",
+    "category": "pet_care",
+    "unit": "110 g",
+    "mrp": 15000,
+    "price": 15000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dog",
+      "kukur",
+      "dog treat"
+    ],
+    "images": [
+      "images/pet_care/141_pedigree_dentastix_small_breed.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "purepet-chicken-biscuits",
+    "name": "Purepet Chicken Biscuit Dog Treats",
+    "category": "pet_care",
+    "unit": "500 g",
+    "mrp": 11500,
+    "price": 11500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dog",
+      "kukur",
+      "biscuit"
+    ],
+    "images": [
+      "images/pet_care/142_purepet_chicken_biscuit_treats.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "temptations-chicken-cat-treats",
+    "name": "Temptations Chicken Cat Treats",
+    "category": "pet_care",
+    "unit": "85 g",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cat",
+      "biralo",
+      "cat treat"
+    ],
+    "images": [
+      "images/pet_care/143_temptations_chicken_cat_treats.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "drools-salmon-cat-treats",
+    "name": "Drools Creamy Salmon Cat Treats",
+    "category": "pet_care",
+    "unit": "60 g",
+    "mrp": 12000,
+    "price": 12000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cat",
+      "biralo",
+      "cat treat"
+    ],
+    "images": [
+      "images/pet_care/144_drools_creamy_salmon_cat_treats.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mtr-paneer-butter-masala",
+    "name": "MTR Paneer Butter Masala",
+    "category": "ready_to_eat",
+    "unit": "300 g",
+    "mrp": 15000,
+    "price": 15000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "paneer",
+      "curry",
+      "ready meal"
+    ],
+    "images": [
+      "images/ready_to_eat/145_mtr_paneer_butter_masala.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "haldirams-dal-tadka",
+    "name": "Haldiram's Dal Tadka",
+    "category": "ready_to_eat",
+    "unit": "300 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dal",
+      "ready meal"
+    ],
+    "images": [
+      "images/ready_to_eat/146_haldirams_dal_tadka.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "itc-kitchens-rajma-masala",
+    "name": "ITC Kitchens of India Rajma Masala",
+    "category": "ready_to_eat",
+    "unit": "285 g",
+    "mrp": 13500,
+    "price": 13500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "rajma",
+      "ready meal"
+    ],
+    "images": [
+      "images/ready_to_eat/147_itc_kitchens_india_rajma_masala.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "gits-punjabi-chole",
+    "name": "Gits Punjabi Chole",
+    "category": "ready_to_eat",
+    "unit": "300 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chole",
+      "chana",
+      "ready meal"
+    ],
+    "images": [
+      "images/ready_to_eat/148_gits_punjabi_chole.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "comfort-fabric-conditioner",
+    "name": "Comfort Fabric Conditioner",
+    "category": "household",
+    "unit": "860 ml",
+    "mrp": 24000,
+    "price": 24000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "fabric softener"
+    ],
+    "images": [
+      "images/home_care/149_comfort_fabric_conditioner.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "lizol-lavender-floor-cleaner",
+    "name": "Lizol Lavender Floor Cleaner",
+    "category": "household",
+    "unit": "975 ml",
+    "mrp": 22500,
+    "price": 22500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "floor cleaner",
+      "pochha"
+    ],
+    "images": [
+      "images/home_care/150_lizol_lavender_floor_cleaner.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "domex-toilet-cleaner",
+    "name": "Domex Toilet Cleaner",
+    "category": "household",
+    "unit": "500 ml",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "toilet cleaner"
+    ],
+    "images": [
+      "images/home_care/151_domex_toilet_cleaner.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "good-knight-gold-flash-refill",
+    "name": "Good Knight Gold Flash Refill",
+    "category": "household",
+    "unit": "45 ml",
+    "mrp": 8500,
+    "price": 8500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "machhar",
+      "mosquito",
+      "lamkhutte"
+    ],
+    "images": [
+      "images/home_care/152_good_knight_gold_flash_refill.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "origami-3ply-toilet-tissue",
+    "name": "Origami 3-Ply Toilet Tissue",
+    "category": "home_utility",
+    "unit": "4 rolls",
+    "mrp": 18000,
+    "price": 18000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "tissue",
+      "toilet paper"
+    ],
+    "images": [
+      "images/home_utility/153_origami_3ply_toilet_tissue.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "scotch-brite-scrub-sponges",
+    "name": "Scotch-Brite Heavy Duty Scrub Sponges",
+    "category": "home_utility",
+    "unit": "Pack of 3",
+    "mrp": 9000,
+    "price": 9000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "scrubber",
+      "sponge",
+      "bartan"
+    ],
+    "images": [
+      "images/home_utility/154_scotch_brite_heavy_duty_scrub_sponges.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "harpic-bathroom-wipes",
+    "name": "Harpic Bathroom Cleaning Wipes",
+    "category": "household",
+    "unit": "30 wipes",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "wipes",
+      "bathroom"
+    ],
+    "images": [
+      "images/home_utility/155_harpic_bathroom_cleaning_wipes.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "beco-compostable-garbage-bags",
+    "name": "Beco Compostable Garbage Bags (Medium)",
+    "category": "home_utility",
+    "unit": "30 bags",
+    "mrp": 18000,
+    "price": 18000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "garbage bag",
+      "dustbin bag",
+      "phohor"
+    ],
+    "images": [
+      "images/home_utility/156_beco_compostable_garbage_bags.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "itc-master-chef-green-peas",
+    "name": "ITC Master Chef Frozen Green Peas",
+    "category": "frozen",
+    "unit": "500 g",
+    "mrp": 11000,
+    "price": 11000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "matar",
+      "kerau",
+      "peas"
+    ],
+    "images": [
+      "images/frozen/157_itc_master_chef_frozen_green_peas.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mccain-aloo-tikki",
+    "name": "McCain Aloo Tikki",
+    "category": "frozen",
+    "unit": "400 g",
+    "mrp": 15000,
+    "price": 15000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "aloo tikki",
+      "snack"
+    ],
+    "images": [
+      "images/frozen/158_mccain_aloo_tikki.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "haldirams-minute-khana-samosa",
+    "name": "Haldiram's Minute Khana Samosa",
+    "category": "frozen",
+    "unit": "400 g",
+    "mrp": 14000,
+    "price": 14000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "samosa",
+      "snack"
+    ],
+    "images": [
+      "images/frozen/159_haldirams_minute_khana_samosa.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "godrej-yummiez-veggie-nuggets",
+    "name": "Godrej Yummiez Veggie Nuggets",
+    "category": "frozen",
+    "unit": "400 g",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "nuggets",
+      "snack"
+    ],
+    "images": [
+      "images/frozen/160_godrej_yumm_veggie_nuggets.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "nutraj-dates",
+    "name": "Nutraj Arabian Dates",
+    "category": "dry_fruits",
+    "unit": "500 g",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "khajur",
+      "dates"
+    ],
+    "images": [
+      "images/dry_fruits_seeds/161_nutraj_dates.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "happilo-california-raisins",
+    "name": "Happilo California Raisins",
+    "category": "dry_fruits",
+    "unit": "250 g",
+    "mrp": 17500,
+    "price": 17500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "kishmish",
+      "raisins"
+    ],
+    "images": [
+      "images/dry_fruits_seeds/162_happilo_california_raisins.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "farmley-roasted-makhana",
+    "name": "Farmley Roasted Makhana",
+    "category": "dry_fruits",
+    "unit": "80 g",
+    "mrp": 12500,
+    "price": 12500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "makhana",
+      "fox nuts"
+    ],
+    "images": [
+      "images/dry_fruits_seeds/163_farmley_roasted_makhana.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-chia-seeds",
+    "name": "Tata Sampann Chia Seeds",
+    "category": "dry_fruits",
+    "unit": "150 g",
+    "mrp": 13000,
+    "price": 13000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "chia",
+      "seeds"
+    ],
+    "images": [
+      "images/dry_fruits_seeds/164_tata_sampann_chia_seeds.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "pampers-premium-care-pants-m",
+    "name": "Pampers Premium Care Pants (M, 7–12 kg)",
+    "category": "baby_care",
+    "unit": "52 pants",
+    "mrp": 129900,
+    "price": 129900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "diaper",
+      "pampers",
+      "nappy"
+    ],
+    "images": [
+      "images/baby_care/165_pampers_premium_care_pants.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "huggies-natural-soft-pants-m",
+    "name": "Huggies Natural Soft Pants (M)",
+    "category": "baby_care",
+    "unit": "34 pants",
+    "mrp": 79900,
+    "price": 79900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "diaper",
+      "huggies",
+      "nappy"
+    ],
+    "images": [
+      "images/baby_care/166_huggies_natural_soft_baby_pants.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "himalaya-gentle-baby-shampoo",
+    "name": "Himalaya Gentle Baby Shampoo",
+    "category": "baby_care",
+    "unit": "200 ml",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "baby shampoo"
+    ],
+    "images": [
+      "images/baby_care/167_himalaya_gentle_baby_shampoo.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mee-mee-caring-baby-wipes",
+    "name": "Mee Mee Caring Baby Wipes",
+    "category": "baby_care",
+    "unit": "72 wipes",
+    "mrp": 13900,
+    "price": 13900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "baby wipes",
+      "wipes"
+    ],
+    "images": [
+      "images/baby_care/168_mee_mee_caring_baby_wipes.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "harvest-gold-white-bread",
+    "name": "Harvest Gold White Bread",
+    "category": "dairy",
+    "unit": "400 g",
+    "mrp": 4500,
+    "price": 4500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "pauroti",
+      "bread"
+    ],
+    "images": [
+      "images/bakery/169_harvest_gold_white_bread.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "modern-milk-bread",
+    "name": "Modern Milk Bread",
+    "category": "dairy",
+    "unit": "350 g",
+    "mrp": 4000,
+    "price": 4000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "pauroti",
+      "bread"
+    ],
+    "images": [
+      "images/bakery/170_modern_milk_bread.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "britannia-fruit-cake",
+    "name": "Britannia Fruit Cake",
+    "category": "dairy",
+    "unit": "130 g",
+    "mrp": 4500,
+    "price": 4500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "cake"
+    ],
+    "images": [
+      "images/bakery/171_britannia_fruit_cake.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "britannia-treat-choco-croissant",
+    "name": "Britannia Treat Choco Croissant",
+    "category": "dairy",
+    "unit": "45 g",
+    "mrp": 2000,
+    "price": 2000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "croissant",
+      "cake"
+    ],
+    "images": [
+      "images/bakery/172_britannia_treat_choco_croissant.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-urad-dal",
+    "name": "Tata Sampann Urad Dal",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "maas",
+      "urad",
+      "dal"
+    ],
+    "images": [
+      "images/pulses_breakfast/173_tata_sampann_urad_dal.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-masoor-dal",
+    "name": "Tata Sampann Masoor Dal",
+    "category": "staples",
+    "unit": "1 kg",
+    "mrp": 15500,
+    "price": 15500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "musuro",
+      "masoor",
+      "dal"
+    ],
+    "images": [
+      "images/pulses_breakfast/174_tata_sampann_masoor_dal.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fortune-chakki-fresh-besan",
+    "name": "Fortune Chakki Fresh Besan",
+    "category": "staples",
+    "unit": "500 g",
+    "mrp": 7000,
+    "price": 7000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "besan",
+      "gram flour"
+    ],
+    "images": [
+      "images/pulses_breakfast/175_fortune_chakki_fresh_besan.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "saffola-oats",
+    "name": "Saffola Oats",
+    "category": "breakfast",
+    "unit": "1 kg",
+    "mrp": 18500,
+    "price": 18500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "oats"
+    ],
+    "images": [
+      "images/pulses_breakfast/176_saffola_oats.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "fortune-kachi-ghani-mustard-oil",
+    "name": "Fortune Kachi Ghani Mustard Oil",
+    "category": "staples",
+    "unit": "1 L",
+    "mrp": 18000,
+    "price": 18000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "tori ko tel",
+      "sarson",
+      "mustard oil",
+      "tel"
+    ],
+    "images": [
+      "images/oil_ghee/177_fortune_kachi_ghani_mustard_oil.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "patanjali-cow-ghee",
+    "name": "Patanjali Cow Ghee",
+    "category": "staples",
+    "unit": "1 L",
+    "mrp": 65000,
+    "price": 65000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "ghiu",
+      "ghee"
+    ],
+    "images": [
+      "images/oil_ghee/178_patanjali_cow_ghee.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-groundnut-oil",
+    "name": "Tata Sampann Groundnut Oil",
+    "category": "staples",
+    "unit": "1 L",
+    "mrp": 22500,
+    "price": 22500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "badam tel",
+      "groundnut oil",
+      "tel"
+    ],
+    "images": [
+      "images/oil_ghee/179_tata_sampann_groundnut_oil.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "dhara-rice-bran-oil",
+    "name": "Dhara Rice Bran Oil",
+    "category": "staples",
+    "unit": "1 L",
+    "mrp": 16500,
+    "price": 16500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "rice bran oil",
+      "tel"
+    ],
+    "images": [
+      "images/oil_ghee/180_dhara_rice_bran_oil.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cetaphil-baby-daily-lotion",
+    "name": "Cetaphil Baby Daily Lotion",
+    "category": "baby_care",
+    "unit": "400 ml",
+    "mrp": 89900,
+    "price": 89900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "baby lotion"
+    ],
+    "images": [
+      "images/baby_care/181_cetaphil_baby_daily_lotion.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mee-mee-strawberry-kids-toothpaste",
+    "name": "Mee Mee Strawberry Kids Toothpaste",
+    "category": "baby_care",
+    "unit": "70 g",
+    "mrp": 9500,
+    "price": 9500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "kids toothpaste"
+    ],
+    "images": [
+      "images/baby_care/182_mee_mee_strawberry_kids_toothpaste.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mother-sparsh-water-wipes",
+    "name": "Mother Sparsh 99% Water Baby Wipes",
+    "category": "baby_care",
+    "unit": "72 wipes",
+    "mrp": 29900,
+    "price": 29900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "baby wipes",
+      "wipes"
+    ],
+    "images": [
+      "images/baby_care/183_mother_sparsh_pure_water_baby_wipes.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "himalaya-baby-powder",
+    "name": "Himalaya Baby Powder",
+    "category": "baby_care",
+    "unit": "200 g",
+    "mrp": 16000,
+    "price": 16000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "baby powder",
+      "powder"
+    ],
+    "images": [
+      "images/baby_care/184_himalaya_baby_powder.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "prettykrafts-laundry-basket",
+    "name": "PrettyKrafts Laundry Basket",
+    "category": "home_utility",
+    "unit": "1 pc",
+    "mrp": 44900,
+    "price": 44900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "laundry basket"
+    ],
+    "images": [
+      "images/home_utility/185_prettykrafts_laundry_basket.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "milton-steel-tiffin",
+    "name": "Milton Steel Tiffin Lunch Box",
+    "category": "home_utility",
+    "unit": "1 set",
+    "mrp": 49900,
+    "price": 49900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "tiffin",
+      "lunch box"
+    ],
+    "images": [
+      "images/home_utility/186_milton_steel_tiffin_lunch_box.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cello-puro-steel-x-bottle",
+    "name": "Cello Puro Steel-X Water Bottle",
+    "category": "home_utility",
+    "unit": "1 L",
+    "mrp": 39900,
+    "price": 39900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 5,
+    "altNames": [
+      "bottle",
+      "water bottle"
+    ],
+    "images": [
+      "images/home_utility/187_cello_puro_steel_x_bottle.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "scotch-brite-kitchen-brush-set",
+    "name": "Scotch-Brite Kitchen Brush Set",
+    "category": "home_utility",
+    "unit": "Set of 3",
+    "mrp": 19900,
+    "price": 19900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "brush",
+      "bartan"
+    ],
+    "images": [
+      "images/home_utility/188_scotch_brite_kitchen_brush_set.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "zoff-whole-cumin-seeds",
+    "name": "Zoff Whole Cumin Seeds (Jeera)",
+    "category": "masala",
+    "unit": "100 g",
+    "mrp": 7500,
+    "price": 7500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "jeera",
+      "jira",
+      "cumin"
+    ],
+    "images": [
+      "images/whole_spices/189_zoff_whole_cumin_seeds.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "nutraj-green-cardamom",
+    "name": "Nutraj Green Cardamom (Elaichi)",
+    "category": "masala",
+    "unit": "50 g",
+    "mrp": 16500,
+    "price": 16500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "alaichi",
+      "elaichi",
+      "cardamom"
+    ],
+    "images": [
+      "images/whole_spices/190_nutraj_green_cardamom.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "daily-good-cloves",
+    "name": "Daily Good Cloves (Lwang)",
+    "category": "masala",
+    "unit": "50 g",
+    "mrp": 9500,
+    "price": 9500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "lwang",
+      "laung",
+      "cloves"
+    ],
+    "images": [
+      "images/whole_spices/191_daily_good_cloves.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "organic-tattva-cinnamon-sticks",
+    "name": "Organic Tattva Cinnamon Sticks (Dalchini)",
+    "category": "masala",
+    "unit": "50 g",
+    "mrp": 9900,
+    "price": 9900,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "dalchini",
+      "cinnamon"
+    ],
+    "images": [
+      "images/whole_spices/192_organic_tattva_cinnamon_sticks.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "b-natural-mixed-fruit",
+    "name": "B Natural Mixed Fruit Juice",
+    "category": "beverages",
+    "unit": "1 L",
+    "mrp": 11500,
+    "price": 11500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "juice"
+    ],
+    "images": [
+      "images/beverages/193_b_natural_mixed_fruit.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "raw-pressery-valencia-orange",
+    "name": "Raw Pressery Valencia Orange Juice",
+    "category": "beverages",
+    "unit": "1 L",
+    "mrp": 22500,
+    "price": 22500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "juice",
+      "orange",
+      "suntala"
+    ],
+    "images": [
+      "images/beverages/194_raw_pressery_valencia_orange.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "paper-boat-jamun",
+    "name": "Paper Boat Jamun Kala Khatta",
+    "category": "beverages",
+    "unit": "200 ml",
+    "mrp": 3000,
+    "price": 3000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "jamun",
+      "kala khatta"
+    ],
+    "images": [
+      "images/beverages/195_paper_boat_jamun.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "cavins-rose-lassi",
+    "name": "Cavin's Rose Lassi",
+    "category": "beverages",
+    "unit": "180 ml",
+    "mrp": 3500,
+    "price": 3500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "lassi",
+      "rose"
+    ],
+    "images": [
+      "images/beverages/196_cavins_rose_lassi.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "mdh-chana-masala",
+    "name": "MDH Chana Masala",
+    "category": "masala",
+    "unit": "100 g",
+    "mrp": 8500,
+    "price": 8500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "masala",
+      "chana masala"
+    ],
+    "images": [
+      "images/spices/197_mdh_chana_masala.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "everest-garam-masala",
+    "name": "Everest Garam Masala",
+    "category": "masala",
+    "unit": "100 g",
+    "mrp": 9500,
+    "price": 9500,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "masala",
+      "garam masala"
+    ],
+    "images": [
+      "images/spices/198_everest_garam_masala.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "catch-black-pepper-powder",
+    "name": "Catch Black Pepper Powder",
+    "category": "masala",
+    "unit": "100 g",
+    "mrp": 14000,
+    "price": 14000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "marich",
+      "kali mirch",
+      "pepper"
+    ],
+    "images": [
+      "images/spices/199_catch_black_pepper_powder.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  },
+  {
+    "slug": "tata-sampann-turmeric-powder",
+    "name": "Tata Sampann Turmeric Powder",
+    "category": "masala",
+    "unit": "200 g",
+    "mrp": 7000,
+    "price": 7000,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "maxPerOrder": 10,
+    "altNames": [
+      "besar",
+      "haldi",
+      "turmeric"
+    ],
+    "images": [
+      "images/spices/200_tata_sampann_turmeric_powder.jpg"
+    ],
+    "isActive": true,
+    "needsReview": true
+  }
+]

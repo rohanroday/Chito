@@ -1,0 +1,26 @@
+# Env files — secrets (keep the .env.example files committed)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Dependencies & builds
+node_modules/
+dist/
+build/
+.next/
+.expo/
+.turbo/
+android/
+ios/
+*.apk
+*.aab
+
+# Misc
+*.log
+.DS_Store
+Thumbs.db
+*.zip
+
+# Claude Code local settings
+.claude/settings.local.json

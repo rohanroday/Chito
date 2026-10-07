@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/* Chito "Gompa" tokens — mirror DESIGN.md §2 / §11 */
+@theme {
+  --color-maroon: #7b1e28;
+  --color-maroon-700: #5e141d;
+  --color-maroon-50: #f7e9ea;
+  --color-gold: #ffd60a;
+  --color-gold-deep: #c99700;
+  --color-gold-50: #fff7d1;
+  --color-turquoise: #0f7c80;
+  --color-turquoise-50: #e3f3f3;
+  --color-leaf: #2e9e3e;
+  --color-leaf-50: #eaf7ec;
+  --color-vermilion: #d63a2a;
+  --color-vermilion-50: #fcebe9;
+  --color-saffron: #e98a15;
+  --color-parchment: #fbf4e6;
+  --color-card: #fffdf7;
+  --color-sand: #f2e8d5;
+  --color-line: #e8dcc4;
+  --color-wood: #5a3a26;
+  --color-ink: #24150f;
+  --color-muted: #7a6a5e;
+  --color-subtle: #a99b8e;
+
+  --font-display: var(--font-yatra), serif;
+  --font-sans: var(--font-mukta), system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Carved dentil border (row of small gold squares on dark wood/maroon) */
+.dentil {
+  height: 8px;
+  background-color: var(--color-maroon-700);
+  background-image: linear-gradient(90deg, var(--color-gold-deep) 50%, transparent 50%);
+  background-size: 8px 4px;
+  background-repeat: repeat-x;
+  background-position: 2px 2px;
+}
+
+/* Arched "gompa window" top */
+.arch {
+  border-top-left-radius: 999px 60%;
+  border-top-right-radius: 999px 60%;
+}
+
+@keyframes flash-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 214, 10, 0); }
+  30% { box-shadow: 0 0 0 4px rgba(255, 214, 10, 0.9); }
+}
+.flash-new {
+  animation: flash-gold 1.2s ease-in-out 4;
+}
+
+/* Rider slip printing: only the slip is printed */
+.print-slip { display: none; }
+@media print {
+  body * { visibility: hidden; }
+  .print-slip, .print-slip * { visibility: visible; }
+  .print-slip { display: block; position: absolute; inset: 0; padding: 16px; font-size: 14px; }
+}
+
+/* Day report printing: only the report is printed */
+@media print {
+  .print-area, .print-area * { visibility: visible; }
+  .print-area { position: absolute; inset: 0; padding: 16px; }
+  .no-print { display: none !important; }
+}

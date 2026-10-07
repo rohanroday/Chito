@@ -1,0 +1,53 @@
+# Render blueprint for the Chito API (demo setup on the FREE plan).
+# Render → New → Blueprint → pick this repo. It asks for every "sync: false" value (secrets are never stored in git).
+# Free plan: the server sleeps after 15 min without visitors and takes ~30–60 s to wake up.
+services:
+  - type: web
+    name: chito-api
+    runtime: node
+    plan: free
+    rootDir: apps/api
+    # Dev tools (TypeScript) are needed to build, so include them
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22.12.0"
+      # DEMO: development mode keeps OTP 1234 working (production refuses to start without real SMS).
+      # Anyone with the APK can log in as any number, so share it only with people you trust.
+      - key: NODE_ENV
+        value: development
+      - key: OTP_DEV_MODE
+        value: "true"
+      # DEMO: let friends outside Singtam try ordering at any hour. The app and admin say "TEST MODE" while these are on.
+      - key: DEV_ALLOW_ANY_LOCATION
+        value: "true"
+      - key: DEV_IGNORE_STORE_HOURS
+        value: "true"
+      # Browsers allowed to call the API (phones need no entry). Add your admin's address if you host it.
+      - key: CORS_ORIGINS
+        value: http://localhost:3000,http://localhost:8081
+      - key: TZ
+        value: Asia/Kolkata
+      # Secrets: paste the same values as in apps/api/.env when Render asks
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: IMAGEKIT_URL_ENDPOINT
+        sync: false
+      - key: IMAGEKIT_PRIVATE_KEY
+        sync: false
+      - key: IMAGEKIT_FOLDER
+        value: /chito
+      # PUBLIC_API_URL is not needed: the server uses Render's own https address for Razorpay's return page

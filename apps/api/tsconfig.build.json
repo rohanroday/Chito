@@ -1,0 +1,9 @@
+{
+  // Production build for the server only (no test/seed scripts): src/index.ts → dist/index.js
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"]
+}
