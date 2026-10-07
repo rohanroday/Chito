@@ -128,8 +128,8 @@ export default function AddressScreen() {
           how: 'saved',
           location: saved.location,
           distanceKm: saved.distanceKm,
-          serviceable: saved.serviceable === true,
-          testBypass: saved.serviceable === true && saved.distanceKm > store.serviceRadiusKm,
+          // Saved earlier (maybe under an old test mode): re-check against today's radius
+          serviceable: saved.serviceable === true && saved.distanceKm <= store.serviceRadiusKm,
         }
       : { kind: 'idle' },
   );
@@ -332,15 +332,7 @@ export default function AddressScreen() {
         )}
 
         {loc.kind === 'found' &&
-          (loc.testBypass ? (
-            // Never pretend an out-of-range address is fine: say it's only allowed in test mode
-            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: '#FDF0DD', borderRadius: radius.md, padding: 12, borderWidth: 1, borderColor: colors.saffron }}>
-              <CircleAlert size={20} color={colors.saffron} />
-              <Txt variant="strong" color={colors.wood} style={{ flex: 1 }}>
-                This pin is {loc.distanceKm} km away, outside our {store.serviceRadiusKm} km area. Orders are allowed only because the store is in TEST MODE.
-              </Txt>
-            </View>
-          ) : loc.serviceable ? (
+          (loc.serviceable ? (
             <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', backgroundColor: colors.leaf50, borderRadius: radius.md, padding: 12 }}>
               <CircleCheck size={20} color={colors.leaf} />
               <Txt variant="strong" color={colors.leaf} style={{ flex: 1 }}>

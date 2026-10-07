@@ -89,7 +89,7 @@ Then `cd apps/admin && npm run dev` and open http://localhost:3000. You log in w
 ---
 
 ## Going live (later, not for the demo)
-1. **MSG91** Auth Key + DLT OTP template in Render's environment, then set `OTP_DEV_MODE=false`, `DEV_ALLOW_ANY_LOCATION=false`, `DEV_IGNORE_STORE_HOURS=false` and `NODE_ENV=production`.
+1. **MSG91** Auth Key + DLT OTP template in Render's environment, then set `OTP_DEV_MODE=false`, `DEV_IGNORE_STORE_HOURS=false` and `NODE_ENV=production`.
 2. A paid Render plan (no sleeping), or another always-on server.
 3. **Razorpay live keys** (after KYC) and a **Google Maps** key for the map.
 4. Real product photos and prices. A strong admin password.

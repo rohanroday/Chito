@@ -58,7 +58,7 @@ customer.post('/auth/otp/verify', async (req, res) => {
     await Otp.deleteMany({ phone });
   }
   otpLimit.succeed(phone);
-  const user = await User.findOneAndUpdate({ phone }, { $setOnInsert: { phone } }, { upsert: true, new: true });
+  const user = await User.findOneAndUpdate({ phone }, { $setOnInsert: { phone } }, { upsert: true, returnDocument: 'after' });
   if (user.isBlocked) throw new HttpError(403, 'BLOCKED', 'Your account is blocked. Please contact Chito.');
   res.json({
     user: { id: user._id.toString(), phone: user.phone, name: user.name },
@@ -115,7 +115,7 @@ customer.get('/me', requireCustomer, async (req, res) => {
 
 customer.patch('/me', requireCustomer, async (req, res) => {
   const body = parse(z.object({ name: z.string().trim().min(2).max(40) }), req.body);
-  const u = await User.findByIdAndUpdate(userId(req), body, { new: true });
+  const u = await User.findByIdAndUpdate(userId(req), body, { returnDocument: 'after' });
   if (!u) throw unauthorized(); // account was removed
   res.json({ id: u._id.toString(), phone: u.phone, name: u.name });
 });

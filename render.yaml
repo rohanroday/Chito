@@ -22,9 +22,6 @@ services:
       - key: OTP_DEV_MODE
         value: "true"
       # NOTE: values written here win. Render resets them from this file on every push, so change them HERE, not in the dashboard.
-      # 3 km rule enforced: only pins within the store's radius can order
-      - key: DEV_ALLOW_ANY_LOCATION
-        value: "false"
       # DEMO: ordering works at any hour (the app and admin say "TEST MODE" while this is on)
       - key: DEV_IGNORE_STORE_HOURS
         value: "true"

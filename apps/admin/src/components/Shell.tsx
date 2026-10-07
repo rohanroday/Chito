@@ -49,12 +49,12 @@ function OpenSwitch() {
 
   if (!store) return null;
   const tm = store.testMode;
-  const testRules = tm ? [tm.anyLocation && '3 km check OFF', tm.ignoreHours && 'store hours ignored', tm.fixedOtp && 'OTP is 1234'].filter(Boolean) : [];
+  const testRules = tm ? [tm.ignoreHours && 'store hours ignored', tm.fixedOtp && 'OTP is 1234'].filter(Boolean) : [];
   return (
     <div className="relative flex items-center gap-2">
       {testRules.length > 0 && (
         <span
-          title="Set DEV_ALLOW_ANY_LOCATION / DEV_IGNORE_STORE_HOURS / OTP_DEV_MODE to false in apps/api/.env (they are ignored in production)"
+          title="Set DEV_IGNORE_STORE_HOURS / OTP_DEV_MODE to false on the server (they are ignored in production). The 3 km rule always applies."
           className="flex items-center gap-1.5 rounded-full border border-saffron/60 bg-gold-50 px-3 py-1 text-xs font-semibold text-wood">
           <AlertTriangle size={14} className="text-saffron" />
           Test mode: {testRules.join(' · ')}

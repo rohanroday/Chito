@@ -87,7 +87,7 @@ export type StoreSettings = {
   baseEtaMin: number;
   supportPhone: string;
   /** Dev-only switches on the server (always false in production). */
-  testMode?: { anyLocation: boolean; ignoreHours: boolean; fixedOtp: boolean };
+  testMode?: { ignoreHours: boolean; fixedOtp: boolean };
 };
 
 export type Stats = {

@@ -372,7 +372,7 @@ db.stores.findOne({
 |---|---|
 | **Auth** | `POST /auth/otp/send` · `POST /auth/otp/verify` · `POST /auth/refresh` · `POST /auth/logout` (ends all sessions of the account) |
 | **Me** | `GET /me` · `PATCH /me` · `DELETE /me` · `POST /me/push-token` |
-| **Serviceability** | `POST /serviceability/check` `{lat, lng}` → `{serviceable, withinRadius, testModeBypass, distanceKm}` · ✅ `POST /geo/resolve` `{text}` (shared WhatsApp/Google Maps location → checked pin) · `POST /waitlist` (later) |
+| **Serviceability** | `POST /serviceability/check` `{lat, lng}` → `{serviceable, withinRadius, distanceKm}` · ✅ `POST /geo/resolve` `{text}` (shared WhatsApp/Google Maps location → checked pin) · `POST /waitlist` (later) |
 | **Addresses** | `GET/POST /addresses` · `PATCH/DELETE /addresses/:id` |
 | **Catalog** | `GET /home` (banners, categories, rows) · `GET /categories` · `GET /categories/:slug/products` · `GET /products/:slug` · `GET /search?q=` |
 | **Cart** | `GET /cart` · `PUT /cart` · `POST /cart/validate` (prices, stock, fees, coupon) |
@@ -412,7 +412,7 @@ db.stores.findOne({
 | 10 | Fake/prank COD orders | First-order phone call verification, block users, COD limit for new users |
 | 11 | **Real SMS OTP not connected yet** | ⚠️ Test mode: every number logs in with OTP 1234. Needs MSG91 Auth Key + DLT sender/template, then `OTP_DEV_MODE=false` (the server refuses to start in production with it on). |
 | 12 | **Map tiles** | ⚠️ The map uses OpenStreetMap's free tiles, which forbid heavy app traffic. Switch to Google Maps (key needed) before launch. |
-| 13 | Dev-only switches | `DEV_IGNORE_STORE_HOURS` / `DEV_ALLOW_ANY_LOCATION` must be off in production (ignored there; the admin shows a TEST MODE chip while on). |
+| 13 | Dev-only switches | `DEV_IGNORE_STORE_HOURS` must be off in production (ignored there; the admin shows a TEST MODE chip while on). The 3 km rule has no switch: it always applies, in test mode too. |
 | 14 | Admin login token in browser storage | Move to httpOnly cookies when the admin is deployed on its own domain. |
 | 15 | Ending sessions on password change / staff removal | Not possible yet: there is no "change password" or "remove staff" screen. Add both, and make them log the person out everywhere. |
 | 16 | Expo Go limits | Returning from Razorpay and the `chito://` link need a development build (`eas build`); in Expo Go the customer may need to tap "Back to Chito". |

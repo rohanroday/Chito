@@ -27,9 +27,8 @@ const schema = z.object({
   IMAGEKIT_URL_ENDPOINT: z.string().optional(),
   IMAGEKIT_PRIVATE_KEY: z.string().optional(),
   IMAGEKIT_FOLDER: z.string().default('/chito'),
-  // Dev-only escape hatches for testing away from Singtam / outside store hours.
-  // Ignored when NODE_ENV=production.
-  DEV_ALLOW_ANY_LOCATION: bool,
+  // Dev-only escape hatch for testing outside store hours. Ignored when NODE_ENV=production.
+  // (There is deliberately no switch for the 3 km rule: it always applies.)
   DEV_IGNORE_STORE_HOURS: bool,
 });
 
@@ -51,6 +50,5 @@ export const env = {
   ...e,
   isProd,
   corsOrigins: e.CORS_ORIGINS.split(',').map((s) => s.trim()).filter(Boolean),
-  devAllowAnyLocation: !isProd && e.DEV_ALLOW_ANY_LOCATION,
   devIgnoreStoreHours: !isProd && e.DEV_IGNORE_STORE_HOURS,
 };

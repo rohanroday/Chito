@@ -67,7 +67,7 @@ function broadcast(o: OrderHydrated, event: 'order:new' | 'order:updated') {
 }
 
 async function nextOrderNumber(session: mongoose.ClientSession) {
-  const c = await Counter.findOneAndUpdate({ _id: 'order' }, { $inc: { seq: 1 } }, { upsert: true, new: true, session });
+  const c = await Counter.findOneAndUpdate({ _id: 'order' }, { $inc: { seq: 1 } }, { upsert: true, returnDocument: 'after', session });
   return `CH-${String(c.seq).padStart(6, '0')}`;
 }
 
@@ -139,7 +139,7 @@ async function placeOrder(
         if (!product || !shown) throw conflict('PRODUCT_UNAVAILABLE', `An item in your jhola is no longer available.`, { slug });
         if (qty > product.maxPerOrder) throw badRequest('MAX_PER_ORDER', `You can order at most ${product.maxPerOrder} of ${product.name}.`, { slug });
         // Atomic decrement: only succeeds if enough stock remains
-        const updated = await Product.findOneAndUpdate({ _id: product._id, stock: { $gte: qty } }, { $inc: { stock: -qty } }, { session, new: true });
+        const updated = await Product.findOneAndUpdate({ _id: product._id, stock: { $gte: qty } }, { $inc: { stock: -qty } }, { session, returnDocument: 'after' });
         if (!updated) throw conflict('OUT_OF_STOCK', `Sorry, ${product.name} just went out of stock.`, { slug, available: product.stock });
         // Prices come from the DB, never from the client
         lines.push({ slug, name: product.name, unit: product.unit, image: product.images[0] ?? '', price: product.price, mrp: product.mrp, qty });
@@ -255,7 +255,7 @@ export async function markOrderPaid(linkId: string, paymentId: string) {
       $set: { status: 'PLACED', paymentStatus: 'PAID', 'payment.paymentId': paymentId },
       $push: { statusHistory: { status: 'PLACED', at: new Date(), by: 'payment' } },
     },
-    { new: true },
+    { returnDocument: 'after' },
   );
   if (o) {
     broadcast(o, 'order:new'); // now the store hears about it
@@ -313,7 +313,7 @@ export async function advanceOrder(orderId: string, to: OrderStatus, adminId: st
       $set: { status: to, ...(to === 'DELIVERED' && current.paymentMethod === 'COD' && { paymentStatus: 'PAID' }) },
       $push: { statusHistory: { status: to, at: new Date(), by: `admin:${adminId}` } },
     },
-    { new: true },
+    { returnDocument: 'after' },
   );
   if (!o) throw conflict('ALREADY_UPDATED', 'This order was just updated. Refresh to see the latest.');
   if (to === 'DELIVERED') await settleRiderAfterDelivery(o);
@@ -338,7 +338,7 @@ export async function assignRider(orderId: string, riderId: string, adminId: str
       $set: { riderId: rider._id, rider: { name: rider.name, phone: rider.phone }, status: 'OUT_FOR_DELIVERY' },
       $push: { statusHistory: { status: 'OUT_FOR_DELIVERY', at: new Date(), by: `admin:${adminId}` } },
     },
-    { new: true },
+    { returnDocument: 'after' },
   );
   if (!o) throw conflict('ALREADY_UPDATED', 'This order was just updated. Refresh to see the latest.');
   await Rider.updateOne({ _id: rider._id }, { status: 'ON_DELIVERY' }); // a rider may carry several orders (batching)

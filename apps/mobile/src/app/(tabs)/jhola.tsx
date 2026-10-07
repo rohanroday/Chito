@@ -89,7 +89,8 @@ export default function Jhola() {
   }
 
   const hasLocation = !!address?.location;
-  const deliverable = address?.serviceable === true;
+  // Re-checked against today's radius: an address saved under an old test mode may be far away
+  const deliverable = address?.serviceable === true && address.distanceKm <= store.serviceRadiusKm;
   const forOther = !!address && isForSomeoneElse(address);
   const changeAddress = () => router.push(hasSaved ? { pathname: '/addresses', params: { pick: '1' } } : '/address');
 
@@ -241,11 +242,7 @@ export default function Jhola() {
                 <Txt variant="strong">Delivering to {address.label}</Txt>
                 <Txt variant="caption" color={deliverable ? colors.muted : colors.vermilion}>
                   {address.landmark} · {address.distanceKm} km from store
-                  {!deliverable
-                    ? ` · outside our ${store.serviceRadiusKm} km area`
-                    : address.distanceKm > store.serviceRadiusKm
-                      ? ` · outside ${store.serviceRadiusKm} km (allowed in TEST MODE only)`
-                      : ''}
+                  {!deliverable ? ` · outside our ${store.serviceRadiusKm} km area` : ''}
                 </Txt>
               </>
             ) : hasTypedAddress(address) ? (

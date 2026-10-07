@@ -34,29 +34,18 @@ export function isOpenNow(store: StoreDoc) {
 }
 
 /**
- * `withinRadius` is always the true answer. `serviceable` is what checkout enforces — the same,
- * unless the dev-only DEV_ALLOW_ANY_LOCATION bypass is on (then `testModeBypass` is true so
- * apps can say so instead of pretending the address is in range).
+ * The 3 km rule. It always applies (also in test mode): to try the app from far away,
+ * set the delivery pin inside the circle (Pick on the map / paste a location near the store).
  */
 export function checkServiceability(store: StoreDoc, at?: LatLng) {
-  const bypass = env.devAllowAnyLocation;
-  if (!at) {
-    return { serviceable: bypass, withinRadius: false, testModeBypass: bypass, distanceKm: 0, reason: 'NO_LOCATION' as const };
-  }
+  if (!at) return { serviceable: false, withinRadius: false, distanceKm: 0, reason: 'NO_LOCATION' as const };
   const distanceKm = round1(haversineKm(fromPoint(store.location), at));
   const withinRadius = distanceKm <= store.serviceRadiusKm;
-  const serviceable = withinRadius || bypass;
-  return {
-    serviceable,
-    withinRadius,
-    testModeBypass: bypass && !withinRadius,
-    distanceKm,
-    reason: serviceable ? null : ('OUT_OF_RANGE' as const),
-  };
+  return { serviceable: withinRadius, withinRadius, distanceKm, reason: withinRadius ? null : ('OUT_OF_RANGE' as const) };
 }
 
 /** Dev-only switches that change customer-visible rules — shown as a warning in the apps. */
-export const testMode = () => ({ anyLocation: env.devAllowAnyLocation, ignoreHours: env.devIgnoreStoreHours, fixedOtp: !!env.OTP_DEV_MODE });
+export const testMode = () => ({ ignoreHours: env.devIgnoreStoreHours, fixedOtp: !!env.OTP_DEV_MODE });
 
 export function etaFor(store: StoreDoc, distanceKm: number) {
   return store.baseEtaMin + Math.ceil(distanceKm) * 3;

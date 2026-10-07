@@ -109,15 +109,12 @@ async function main() {
   const near = (await call('POST', '/serviceability/check', SINGTAM)).json;
   check('serviceability near store', near.serviceable === true && near.distanceKm < 1, near);
 
-  // Out-of-range + missing-location rules with the dev bypass OFF (pure function, no HTTP)
+  // Out-of-range + missing-location rules (pure function, no HTTP). The 3 km rule has no bypass.
   const storeDoc = (await Store.findOne())!;
-  const bypass = env.devAllowAnyLocation;
-  (env as { devAllowAnyLocation: boolean }).devAllowAnyLocation = false;
   const far = checkServiceability(storeDoc, GANGTOK);
-  check('Gangtok (≈15 km) is out of range when bypass off', far.serviceable === false && far.reason === 'OUT_OF_RANGE', far);
-  check('no location is not serviceable when bypass off', checkServiceability(storeDoc).serviceable === false);
-  check('Singtam is in range when bypass off', checkServiceability(storeDoc, SINGTAM).serviceable === true);
-  (env as { devAllowAnyLocation: boolean }).devAllowAnyLocation = bypass;
+  check('Gangtok (≈15 km) is out of range', far.serviceable === false && far.reason === 'OUT_OF_RANGE', far);
+  check('no location is not serviceable', checkServiceability(storeDoc).serviceable === false);
+  check('Singtam is in range', checkServiceability(storeDoc, SINGTAM).serviceable === true);
 
   console.log('\nAdmin auth');
   check('wrong admin password → 401', (await call('POST', '/admin/auth/login', { email: process.env.ADMIN_EMAIL, password: 'nope' })).status === 401);
@@ -161,8 +158,7 @@ async function main() {
     check('stock untouched after rejected order', (await Product.findById(milk._id))!.stock === before.milk);
   } else console.log(`  • skipped below-minimum test (minimum order is only ₹${store.minOrderValue / 100})`);
   const farOrder = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: address(GANGTOK), paymentMethod: 'COD' }, ct, { 'Idempotency-Key': key() });
-  if (env.devAllowAnyLocation) console.log('  • skipped far-address checkout test (DEV_ALLOW_ANY_LOCATION is on)');
-  else check('checkout from Gangtok (15.7 km) rejected', farOrder.json.error?.code === 'OUT_OF_RANGE', farOrder.json);
+  check('checkout from Gangtok (15.7 km) rejected, also in test mode', farOrder.json.error?.code === 'OUT_OF_RANGE', farOrder.json);
   const farCheck = (await call('POST', '/serviceability/check', GANGTOK)).json;
   check('serviceability reports true distance + withinRadius=false far away', farCheck.distanceKm > 15 && farCheck.withinRadius === false, farCheck);
   check('missing Idempotency-Key rejected', (await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: address(SINGTAM), paymentMethod: 'COD' }, ct)).status === 400);

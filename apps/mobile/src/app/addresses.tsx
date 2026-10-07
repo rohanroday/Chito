@@ -15,8 +15,8 @@ const goBack = () => (router.canGoBack() ? router.back() : router.replace('/me')
 
 function pinNote(a: Address, radiusKm: number) {
   if (!a.location) return { text: 'Location pin missing · tap Edit to add', bad: true };
-  if (a.serviceable !== true) return { text: `${a.distanceKm} km away · outside our ${radiusKm} km area`, bad: true };
-  if (a.distanceKm > radiusKm) return { text: `${a.distanceKm} km away · allowed in TEST MODE only`, bad: true };
+  // Re-checked against today's radius (an address saved under an old test mode may be far away)
+  if (a.serviceable !== true || a.distanceKm > radiusKm) return { text: `${a.distanceKm} km away · outside our ${radiusKm} km area`, bad: true };
   return { text: `${a.distanceKm} km from our store`, bad: false };
 }
 

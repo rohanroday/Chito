@@ -276,7 +276,7 @@ admin.patch('/riders/:id', async (req, res) => {
 
 admin.post('/riders/:id/settle-cod', async (req, res) => {
   // Atomic swap to 0: cash from a delivery finishing at the same moment isn't lost
-  const before = await Rider.findOneAndUpdate({ _id: req.params.id }, { $set: { codBalance: 0 } }, { new: false });
+  const before = await Rider.findOneAndUpdate({ _id: req.params.id }, { $set: { codBalance: 0 } }, { returnDocument: 'before' });
   if (!before) throw notFound('Rider');
   const settled = before.codBalance;
   before.codBalance = 0;
@@ -324,7 +324,7 @@ admin.post('/categories', async (req, res) => {
 
 admin.patch('/categories/:slug', async (req, res) => {
   const body = parse(categoryBody.partial().extend({ isActive: z.boolean().optional() }), req.body);
-  const c = await Category.findOneAndUpdate({ slug: req.params.slug }, body, { new: true }).lean();
+  const c = await Category.findOneAndUpdate({ slug: req.params.slug }, body, { returnDocument: 'after' }).lean();
   if (!c) throw notFound('Category');
   res.json({ slug: c.slug, name: c.name, nameNe: c.nameNe, sortOrder: c.sortOrder, isActive: c.isActive });
 });
@@ -382,7 +382,7 @@ admin.patch('/products/:id', async (req, res) => {
   if ((body.price ?? current.price) > (body.mrp ?? current.mrp)) {
     throw badRequest('VALIDATION', 'Price can’t be more than MRP', { price: ['Price can’t be more than MRP'] });
   }
-  const p = await Product.findByIdAndUpdate(req.params.id, body, { new: true, runValidators: true }).lean();
+  const p = await Product.findByIdAndUpdate(req.params.id, body, { returnDocument: 'after', runValidators: true }).lean();
   if (!p) throw notFound('Product');
   emitToAdmins('product:updated', { id: p._id.toString() });
   res.json(serializeProduct(p));
@@ -446,7 +446,7 @@ admin.patch('/store', requireOwner, async (req, res) => {
       throw badRequest('VALIDATION', 'Closing time must be after opening time', { closeTime: ['Closing time must be after opening time'] });
     }
   }
-  const store = await Store.findOneAndUpdate({}, { ...rest, ...(location && { location: toPoint(location) }) }, { new: true });
+  const store = await Store.findOneAndUpdate({}, { ...rest, ...(location && { location: toPoint(location) }) }, { returnDocument: 'after' });
   if (!store) throw notFound('Store');
   const pub = publicStore(store);
   emitToAll('store:updated', pub);
@@ -456,7 +456,7 @@ admin.patch('/store', requireOwner, async (req, res) => {
 // Small helper for the "Open/Closed" switch, allowed for STAFF too (e.g. sudden rain)
 admin.post('/store/open', async (req, res) => {
   const { isOpen, closedMessage } = parse(z.object({ isOpen: z.boolean(), closedMessage: z.string().max(160).optional() }), req.body);
-  const store = await Store.findOneAndUpdate({}, { isOpen, ...(closedMessage !== undefined && { closedMessage }) }, { new: true });
+  const store = await Store.findOneAndUpdate({}, { isOpen, ...(closedMessage !== undefined && { closedMessage }) }, { returnDocument: 'after' });
   if (!store) throw notFound('Store');
   const pub = publicStore(store);
   emitToAll('store:updated', pub);
@@ -471,7 +471,7 @@ admin.get('/customers', async (_req, res) => {
 
 /** Lost phone / suspicious login: end all of a customer's sessions (they log in again with OTP within 15 min). */
 admin.post('/customers/:id/logout-everywhere', requireOwner, async (req, res) => {
-  const u = await User.findByIdAndUpdate(req.params.id, { $inc: { tokenVersion: 1 } }, { new: true }).catch(() => null);
+  const u = await User.findByIdAndUpdate(req.params.id, { $inc: { tokenVersion: 1 } }, { returnDocument: 'after' }).catch(() => null);
   if (!u) throw notFound('Customer');
   res.json({ ok: true });
 });

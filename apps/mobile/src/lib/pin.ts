@@ -2,20 +2,20 @@
 import { api } from '@/api/client';
 import type { Pin, PinCheck } from '@/state/auth';
 
-type Check = { serviceable: boolean; withinRadius?: boolean; testModeBypass?: boolean; distanceKm: number };
+type Check = { serviceable: boolean; withinRadius?: boolean; distanceKm: number };
 
-export type CheckedPin = PinCheck & { testBypass: boolean };
+export type CheckedPin = PinCheck;
 
 /** The server decides serviceability from the store pin the admin set. */
 export async function checkPin(location: Pin): Promise<CheckedPin> {
   const r = await api<Check>('/serviceability/check', { method: 'POST', body: location, auth: false });
-  return { location, distanceKm: r.distanceKm, serviceable: r.serviceable, testBypass: !!r.testModeBypass };
+  return { location, distanceKm: r.distanceKm, serviceable: r.serviceable };
 }
 
 /** "Mom sent her location on WhatsApp": the server reads the coordinates out of the pasted text/link. */
 export async function resolveSharedLocation(text: string): Promise<CheckedPin> {
   const r = await api<Check & { location: Pin }>('/geo/resolve', { method: 'POST', body: { text } });
-  return { location: r.location, distanceKm: r.distanceKm, serviceable: r.serviceable, testBypass: !!r.testModeBypass };
+  return { location: r.location, distanceKm: r.distanceKm, serviceable: r.serviceable };
 }
 
 /** Straight-line km, only for live hints on the map. The server's answer is the one that counts. */

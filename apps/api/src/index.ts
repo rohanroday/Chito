@@ -47,7 +47,6 @@ async function main() {
   server.listen(env.PORT, '0.0.0.0', () => {
     console.log(`🛵 Chito API on http://localhost:${env.PORT}/api/v1 (db: ${mongoose.connection.name})`);
     if (env.OTP_DEV_MODE) console.log('   ⚠️  OTP_DEV_MODE on: OTP is always 1234');
-    if (env.devAllowAnyLocation) console.log('   ⚠️  DEV_ALLOW_ANY_LOCATION on: 3 km check skipped');
     if (env.devIgnoreStoreHours) console.log('   ⚠️  DEV_IGNORE_STORE_HOURS on: store hours ignored');
   });
 }
