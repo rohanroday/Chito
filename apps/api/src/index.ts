@@ -22,6 +22,11 @@ app.use('/api/v1/webhooks/razorpay', express.raw({ type: '*/*', limit: '1mb' }))
 app.use('/api/v1/admin/uploads', express.json({ limit: '8mb' }));
 app.use(express.json({ limit: '200kb' }));
 
+// Opening the bare address in a browser shouldn't look like an error
+app.get('/', (_req, res) => {
+  res.json({ name: 'Chito API', ok: true, health: '/health', api: '/api/v1' });
+});
+
 app.get('/health', (_req, res) => {
   res.json({ ok: true, db: mongoose.connection.readyState === 1 });
 });
