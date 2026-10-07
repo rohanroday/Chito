@@ -21,9 +21,11 @@ services:
         value: development
       - key: OTP_DEV_MODE
         value: "true"
-      # DEMO: let friends outside Singtam try ordering at any hour. The app and admin say "TEST MODE" while these are on.
+      # NOTE: values written here win. Render resets them from this file on every push, so change them HERE, not in the dashboard.
+      # 3 km rule enforced: only pins within the store's radius can order
       - key: DEV_ALLOW_ANY_LOCATION
-        value: "true"
+        value: "false"
+      # DEMO: ordering works at any hour (the app and admin say "TEST MODE" while this is on)
       - key: DEV_IGNORE_STORE_HOURS
         value: "true"
       # Browsers allowed to call the API (phones need no entry). Add your admin's address if you host it.
