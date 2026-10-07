@@ -75,7 +75,7 @@ NEXT_PUBLIC_SOCKET_URL=https://chito-api-8js0.onrender.com
 ```
 Then `cd apps/admin && npm run dev` and open http://localhost:3000. You log in with the same admin email and password (they're in the database). New orders from the APK appear here live.
 
-*Optional, to use the admin from your phone:* deploy `apps/admin` on [vercel.com](https://vercel.com) (free), with the same two variables plus `NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT`. Then add the Vercel address to `CORS_ORIGINS` on Render, e.g. `http://localhost:3000,https://chito-admin.vercel.app`.
+*Optional, to use the admin from your phone:* deploy `apps/admin` on [vercel.com](https://vercel.com) (free), with the same two variables plus `NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT`. Then add the Vercel address to `CORS_ORIGINS` **in `render.yaml`** (not on Render's website: Render resets values from that file on every push) and push. Today it lists `chito-blush.vercel.app` (admin) and `chito-mobile.vercel.app` (web app).
 
 ## Step 6: Before you show it to someone
 - **Wake the server a minute early.** Open `https://chito-api-8js0.onrender.com/health` in your browser. The free plan sleeps after 15 minutes with nobody using it, and the first request then takes 30–60 s.

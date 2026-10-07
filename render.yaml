@@ -25,9 +25,12 @@ services:
       # DEMO: ordering works at any hour (the app and admin say "TEST MODE" while this is on)
       - key: DEV_IGNORE_STORE_HOURS
         value: "true"
-      # Browsers allowed to call the API (phones need no entry). Add your admin's address if you host it.
+      # Websites allowed to call the API (the Android/iPhone app needs no entry).
+      # Add every new website address HERE (comma-separated, no trailing slash); the dashboard value is reset on each push.
+      #   chito-blush.vercel.app  = admin dashboard
+      #   chito-mobile.vercel.app = web version of the customer app
       - key: CORS_ORIGINS
-        value: http://localhost:3000,http://localhost:8081
+        value: http://localhost:3000,http://localhost:8081,https://chito-blush.vercel.app,https://chito-mobile.vercel.app
       - key: TZ
         value: Asia/Kolkata
       # Secrets: paste the same values as in apps/api/.env when Render asks
