@@ -12,6 +12,7 @@ import { api } from '@/api/client';
 import { getSocket } from '@/api/socket';
 import type { Me, StoreInfo } from '@/api/types';
 import { AnimatedSplash } from '@/components/AnimatedSplash';
+import { pullAddresses } from '@/state/address-sync';
 import { useAuth, useProfile } from '@/state/auth';
 import { useCatalogStore, useStoreInfoStore } from '@/state/catalog';
 import { colors } from '@/theme';
@@ -58,12 +59,15 @@ export default function RootLayout() {
   // logged-out-everywhere account gets a 401 here, and api() sends it back to login)
   useEffect(() => {
     if (!loggedIn) return;
-    const sync = () =>
+    const sync = () => {
       api<Me>('/me')
         .then((me) => {
           if (me.name && me.name !== useAuth.getState().name) useAuth.getState().setName(me.name);
         })
         .catch(() => undefined); // offline: keep what we have
+      // Saved addresses come from this account, never from whoever used the phone before
+      pullAddresses().catch(() => undefined);
+    };
     sync();
     const sub = AppState.addEventListener('change', (st) => st === 'active' && sync());
     return () => sub.remove();

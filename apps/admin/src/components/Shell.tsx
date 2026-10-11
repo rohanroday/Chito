@@ -160,14 +160,33 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { connected } = useLive();
   const [admin, setAdmin] = useState<AdminUser | null>(null);
+  // Never spin forever: say when the server is slow (free plan waking up) or unreachable, and offer a retry
+  const [loadError, setLoadError] = useState('');
+  const [slow, setSlow] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!getSession()) {
       router.replace('/login');
       return;
     }
-    api<AdminUser>('/admin/me').then(setAdmin).catch(() => undefined);
-  }, [router]);
+    let alive = true;
+    const slowTimer = setTimeout(() => alive && setSlow(true), 5000);
+    api<AdminUser>('/admin/me')
+      .then((a) => alive && setAdmin(a))
+      .catch((e: Error) => alive && setLoadError(e.message || 'Could not load the dashboard'))
+      .finally(() => clearTimeout(slowTimer));
+    return () => {
+      alive = false;
+      clearTimeout(slowTimer);
+    };
+  }, [router, attempt]);
+
+  function retry() {
+    setLoadError('');
+    setSlow(false);
+    setAttempt((n) => n + 1);
+  }
 
   function logout() {
     logoutSession();
@@ -175,7 +194,32 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }
 
   if (!admin) {
-    return <div className="flex min-h-screen items-center justify-center text-muted">Loading dashboard…</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center p-6">
+        {loadError ? (
+          <div className="max-w-sm rounded-2xl border border-line bg-card p-6 text-center shadow-sm">
+            <p className="font-display text-xl text-maroon">Can’t open the dashboard</p>
+            <p className="mt-2 text-sm text-muted">{loadError}</p>
+            <p className="mt-2 text-xs text-muted">
+              Check your internet. If this keeps happening, the server may be restarting or may not allow this website yet.
+            </p>
+            <div className="mt-4 flex justify-center gap-2">
+              <button onClick={retry} className="h-10 rounded-lg bg-maroon px-4 font-bold text-gold hover:bg-maroon-700">
+                Try again
+              </button>
+              <button onClick={logout} className="h-10 rounded-lg px-4 font-semibold text-muted hover:bg-sand">
+                Log out
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center text-muted">
+            <p>Loading dashboard…</p>
+            {slow && <p className="mt-1 text-xs">The server is waking up (free plan). This can take up to a minute.</p>}
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (

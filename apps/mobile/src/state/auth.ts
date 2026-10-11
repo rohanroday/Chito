@@ -76,6 +76,10 @@ type ProfileState = {
   removeAddress: (id: string) => void;
   selectAddress: (id: string) => void;
   setNotifications: (on: boolean) => void;
+  /** The account's own list, as saved on the server (see state/address-sync.ts). */
+  replaceFromServer: (addresses: Address[], selectedId: string | null) => void;
+  /** Logging out: nothing of this account stays on the phone for the next person. */
+  clearAddresses: () => void;
 };
 
 /** A typed address counts as saved even without a pin; the pin is needed to order. */
@@ -107,6 +111,8 @@ export const useProfile = create<ProfileState>()(
         }),
       selectAddress: (selectedId) => set({ selectedId }),
       setNotifications: (notifications) => set({ notifications }),
+      replaceFromServer: (addresses, selectedId) => set({ addresses, selectedId }),
+      clearAddresses: () => set({ addresses: [], selectedId: null }),
     }),
     {
       name: 'chito-profile',

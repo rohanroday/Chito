@@ -34,7 +34,7 @@ Three standalone npm projects (not yet a pnpm workspace). All three are built, c
   - Routes: `src/routes/customer.ts`, `src/routes/admin.ts`.
   - Business rules: `src/services/orders.ts` (create with transaction + atomic stock, cancel, advance, assignRider) and `src/services/store.ts` (hours in IST, serviceability, bill).
   - Status map: `src/lib/order-status.ts`.
-  - Seeded by `scripts/seed.ts`. `scripts/e2e.ts` runs 93 checks (`npm run e2e`) and `scripts/edge.ts` 61 edge-case/abuse checks (`npm run edge`) against a running server. Both clean up after themselves; run both after any API change.
+  - Seeded by `scripts/seed.ts`. `scripts/e2e.ts` runs 93 checks (`npm run e2e`) and `scripts/edge.ts` 71 edge-case/abuse checks (`npm run edge`) against a running server. Both clean up after themselves, even after a crash; run both after any API change. Razorpay test mode allows ~30 payment links a day: when exhausted, e2e skips the online-payment checks with a note.
   - Robustness rules (keep them):
     - Library errors map to 4xx in `src/lib/http.ts` (bad JSON → 400, too big → 413, bad ObjectId → 404, duplicate key → 409).
     - Order status, rider assignment and COD settlement are atomic conditional updates (double clicks can't double-count).
@@ -58,6 +58,10 @@ Three standalone npm projects (not yet a pnpm workspace). All three are built, c
   - Data comes from the API via `src/api/client.ts` (auto token refresh). Live order updates via `src/api/socket.ts`.
   - Catalogue + store settings live in Zustand stores (`src/state/catalog.ts`), cached in AsyncStorage for offline start and refreshed on launch, app foreground and Jhola open.
   - Tokens are in SecureStore (`src/state/storage.ts`; AsyncStorage on web). Saved addresses (many, each with an optional receiver name/phone) + the selected one are in `useProfile` (`useSelectedAddress()`).
+  - **Saved addresses belong to the account, not the phone.**
+    - They live on the server (`User.savedAddresses`, `GET/PUT /me/addresses`; the server re-measures distance/serviceable).
+    - `src/state/address-sync.ts` loads them after login/foreground and saves every change.
+    - On logout (manual or forced) it clears addresses + jhola from the device. Never let one account's data survive a logout on a shared phone.
   - Address pins come from GPS, a full-screen map (`src/app/map-pick.tsx` + `src/components/map/`: Leaflet + OpenStreetMap tiles in a WebView, iframe on web; never put the WebView in a Modal (unreliable on Android); swap for Google Maps before launch, OSM's tile policy forbids heavy app use) or a pasted shared location.
   - Online payment: `src/lib/payment.ts` opens the Razorpay page (expo-web-browser) and then asks the server; the tracking screen shows "Pay now" while `PAYMENT_PENDING`. The app sends `returnUrl` (= `Linking.createURL('payment-return/ORDER_ID')`, so `exp://…` in Expo Go and `chito://…` in builds) with ONLINE orders; the server only accepts `chito://` (plus `exp://` outside production) and the result page redirects there → `src/app/payment-return/[id].tsx` goes back to the order screen.
   - Home shelves (`src/components/Shelf.tsx`) show a peeking card, an arrow, "See all" and a one-time nudge so sideways scrolling is obvious.

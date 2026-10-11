@@ -12,12 +12,33 @@ const pointSchema = new Schema(
 );
 
 // ── Customers ──
+/** A saved delivery address. Kept on the account, so it follows the customer to any phone. */
+const savedAddressSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    label: { type: String, default: '' },
+    recipientName: { type: String, default: '' },
+    recipientPhone: { type: String, default: '' },
+    house: { type: String, default: '' },
+    landmark: { type: String, default: '' },
+    area: { type: String, default: '' },
+    directions: { type: String, default: '' },
+    // Plain lat/lng (not indexed); orders store their own GeoJSON copy
+    location: { type: { lat: Number, lng: Number }, default: null },
+    distanceKm: { type: Number, default: 0 },
+    serviceable: { type: Boolean, default: false },
+  },
+  { _id: false },
+);
+
 const userSchema = new Schema(
   {
     phone: { type: String, required: true, unique: true },
     name: { type: String, default: '' },
     isBlocked: { type: Boolean, default: false },
     pushTokens: { type: [String], default: [] },
+    savedAddresses: { type: [savedAddressSchema], default: [] },
+    selectedAddressId: { type: String, default: null },
     /** Bumped on logout / "log out everywhere": older refresh tokens stop working. */
     tokenVersion: { type: Number, default: 0 },
   },

@@ -86,6 +86,34 @@ async function main() {
     await call('PATCH', `/admin/riders/${created.riderId}`, { status: 'AVAILABLE' }, at);
     check('setup: category, product, rider created', !!created.categorySlug && !!created.productId && !!created.riderId, { cat: cat.json, prod: prod.json, rider: rider.json });
 
+    console.log('\nSaved addresses belong to the account (not the phone)');
+    const fresh = await call('GET', '/me/addresses', undefined, other.accessToken);
+    check('a new account starts with no saved addresses', fresh.status === 200 && fresh.json.addresses?.length === 0, fresh.json);
+    const saved = await call(
+      'PUT',
+      '/me/addresses',
+      {
+        selectedId: 'mom',
+        addresses: [
+          { id: 'mom', label: "Mom's house", recipientName: 'Mom', recipientPhone: '+919800000001', landmark: 'Above Singtam Hospital', area: 'Golitar', location: SINGTAM, distanceKm: 0, serviceable: true },
+          // The app claims "deliverable, 0 km" for Gangtok: the server must not believe it
+          { id: 'far', label: 'Gangtok', landmark: 'MG Marg', area: 'Gangtok', location: { lat: 27.3314, lng: 88.6138 }, distanceKm: 0, serviceable: true },
+        ],
+      },
+      ct,
+    );
+    const far = saved.json.addresses?.find((a: Json) => a.id === 'far');
+    check('addresses are saved on the account', saved.status === 200 && saved.json.addresses?.length === 2 && saved.json.selectedId === 'mom', saved.json);
+    check('the server measures distance itself (Gangtok is not deliverable)', far?.serviceable === false && far?.distanceKm > 10, far);
+    check('…and Singtam is', saved.json.addresses?.find((a: Json) => a.id === 'mom')?.serviceable === true);
+    check('the list comes back on another login / phone', (await call('GET', '/me/addresses', undefined, (await login(PHONE)).accessToken)).json.addresses?.length === 2);
+    check("another customer never sees them", (await call('GET', '/me/addresses', undefined, other.accessToken)).json.addresses?.length === 0);
+    const badPick = await call('PUT', '/me/addresses', { selectedId: 'nope', addresses: [{ id: 'a1', label: 'Home', location: SINGTAM }] }, ct);
+    check('an unknown selection falls back to the first address', badPick.json.selectedId === 'a1', badPick.json);
+    check('impossible coordinates rejected', (await call('PUT', '/me/addresses', { selectedId: null, addresses: [{ id: 'x', label: 'X', location: { lat: 400, lng: 88 } }] }, ct)).status === 400);
+    check('more than 20 addresses rejected', (await call('PUT', '/me/addresses', { selectedId: null, addresses: Array.from({ length: 21 }, (_, i) => ({ id: `a${i}`, label: 'X' })) }, ct)).status === 400);
+    check('addresses need login', (await call('GET', '/me/addresses')).status === 401);
+
     console.log('\nRequests the server must answer cleanly (no 500s)');
     const bad = await raw('POST', '/auth/otp/verify', '{"phone": "+9199', undefined);
     check('broken JSON → 400', bad.status === 400 && bad.json.error?.code === 'BAD_JSON', bad);

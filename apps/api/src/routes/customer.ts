@@ -120,6 +120,44 @@ customer.patch('/me', requireCustomer, async (req, res) => {
   res.json({ id: u._id.toString(), phone: u.phone, name: u.name });
 });
 
+// ── Saved addresses (per account, so each customer only ever sees their own) ──
+const savedAddressBody = z.object({
+  id: z.string().trim().min(1).max(40),
+  label: z.string().trim().min(1).max(30),
+  recipientName: z.string().trim().max(40).default(''),
+  recipientPhone: z.union([z.literal(''), z.string().regex(/^\+91[6-9]\d{9}$/)]).default(''),
+  house: z.string().max(120).default(''),
+  landmark: z.string().trim().max(160).default(''),
+  area: z.string().trim().max(80).default(''),
+  directions: z.string().max(300).default(''),
+  location: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).nullish(),
+});
+
+async function addressesOf(id: string) {
+  const u = await User.findById(id, { savedAddresses: 1, selectedAddressId: 1 }).lean();
+  if (!u) throw unauthorized(); // account was removed
+  return { addresses: u.savedAddresses ?? [], selectedId: u.selectedAddressId ?? null };
+}
+
+customer.get('/me/addresses', requireCustomer, async (req, res) => {
+  res.json(await addressesOf(userId(req)));
+});
+
+/** Replace the whole list (the app sends it after every add/edit/delete/select). */
+customer.put('/me/addresses', requireCustomer, async (req, res) => {
+  const body = parse(z.object({ addresses: z.array(savedAddressBody).max(20), selectedId: z.string().max(40).nullable() }), req.body);
+  const store = await getStore();
+  // Distance and deliverability are measured here, never taken from the app
+  const addresses = body.addresses.map((a) => {
+    const check = a.location ? checkServiceability(store, a.location) : null;
+    return { ...a, location: a.location ?? null, distanceKm: check?.distanceKm ?? 0, serviceable: check?.serviceable ?? false };
+  });
+  const selectedId = addresses.some((a) => a.id === body.selectedId) ? body.selectedId : (addresses[0]?.id ?? null);
+  const u = await User.findByIdAndUpdate(userId(req), { savedAddresses: addresses, selectedAddressId: selectedId }, { returnDocument: 'after' });
+  if (!u) throw unauthorized();
+  res.json({ addresses, selectedId });
+});
+
 // ── Store + serviceability (public) ──
 customer.get('/store', async (_req, res) => {
   res.json(publicStore(await getStore()));
