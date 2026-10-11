@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/Button';
 import { DentilBorder } from '@/components/ornaments';
 import { Txt } from '@/components/Txt';
+import { distance } from '@/lib/format';
 import { type Address, addressLine, isForSomeoneElse, useProfile } from '@/state/auth';
 import { useStoreInfo } from '@/state/catalog';
 import { colors, radius } from '@/theme';
@@ -16,8 +17,8 @@ const goBack = () => (router.canGoBack() ? router.back() : router.replace('/me')
 function pinNote(a: Address, radiusKm: number) {
   if (!a.location) return { text: 'Location pin missing · tap Edit to add', bad: true };
   // Re-checked against today's radius (an address saved under an old test mode may be far away)
-  if (a.serviceable !== true || a.distanceKm > radiusKm) return { text: `${a.distanceKm} km away · outside our ${radiusKm} km area`, bad: true };
-  return { text: `${a.distanceKm} km from our store`, bad: false };
+  if (a.serviceable !== true || a.distanceKm > radiusKm) return { text: `${distance(a.distanceKm)} away · outside our ${radiusKm} km area`, bad: true };
+  return { text: `${distance(a.distanceKm)} from our store`, bad: false };
 }
 
 export default function Addresses() {

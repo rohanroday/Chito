@@ -6,7 +6,7 @@ import { verifyAccess } from './auth.js';
 
 let io: Server | null = null;
 
-/** Rooms: "admin" (all staff), "user:<id>" (one customer). */
+/** Rooms: "admin" (all staff), "user:<id>" (one customer), "rider:<id>" (one rider). */
 export function initRealtime(server: HttpServer) {
   io = new Server(server, { cors: { origin: env.corsOrigins } });
   io.use((socket, next) => {
@@ -21,7 +21,7 @@ export function initRealtime(server: HttpServer) {
   });
   io.on('connection', (socket) => {
     const c = socket.data.claims;
-    socket.join(c.kind === 'admin' ? 'admin' : `user:${c.sub}`);
+    socket.join(c.kind === 'admin' ? 'admin' : c.kind === 'rider' ? `rider:${c.sub}` : `user:${c.sub}`);
   });
   return io;
 }
@@ -32,6 +32,10 @@ export function emitToAdmins(event: string, payload: unknown) {
 
 export function emitToUser(userId: string, event: string, payload: unknown) {
   io?.to(`user:${userId}`).emit(event, payload);
+}
+
+export function emitToRider(riderId: string, event: string, payload: unknown) {
+  io?.to(`rider:${riderId}`).emit(event, payload);
 }
 
 /** Everyone connected (admins + customers), e.g. the store opening or closing. */

@@ -6,7 +6,8 @@ import { forbidden, unauthorized } from './http.js';
 
 export type CustomerClaims = { sub: string; kind: 'customer' };
 export type AdminClaims = { sub: string; kind: 'admin'; role: 'OWNER' | 'STAFF' };
-export type Claims = CustomerClaims | AdminClaims;
+export type RiderClaims = { sub: string; kind: 'rider' };
+export type Claims = CustomerClaims | AdminClaims | RiderClaims;
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -23,8 +24,8 @@ export type RefreshClaims = Claims & { ver?: number };
  */
 export function issueTokens(claims: Claims, tokenVersion = 0) {
   const access = jwt.sign(claims, env.JWT_ACCESS_SECRET, { expiresIn: env.JWT_ACCESS_EXPIRES_IN as SignOptions['expiresIn'] });
-  // The dashboard has more power than a customer, so its sessions end sooner
-  const refreshTtl = claims.kind === 'admin' ? env.JWT_ADMIN_REFRESH_EXPIRES_IN : env.JWT_REFRESH_EXPIRES_IN;
+  // Staff (dashboard, riders) sessions end sooner than customers'
+  const refreshTtl = claims.kind === 'customer' ? env.JWT_REFRESH_EXPIRES_IN : env.JWT_ADMIN_REFRESH_EXPIRES_IN;
   const refresh = jwt.sign({ ...claims, ver: tokenVersion }, env.JWT_REFRESH_SECRET, { expiresIn: refreshTtl as SignOptions['expiresIn'] });
   return { accessToken: access, refreshToken: refresh };
 }
@@ -50,6 +51,13 @@ function readBearer(req: Request): Claims {
 export function requireCustomer(req: Request, _res: Response, next: NextFunction) {
   const c = readBearer(req);
   if (c.kind !== 'customer') throw forbidden();
+  req.auth = c;
+  next();
+}
+
+export function requireRider(req: Request, _res: Response, next: NextFunction) {
+  const c = readBearer(req);
+  if (c.kind !== 'rider') throw forbidden();
   req.auth = c;
   next();
 }

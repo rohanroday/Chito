@@ -119,6 +119,10 @@ const riderSchema = new Schema(
     availableSince: { type: Date, default: null },
     codBalance: { type: Number, default: 0 }, // cash collected, not yet handed to the store
     isActive: { type: Boolean, default: true },
+    /** Bumped when the rider logs out / is logged out by the store: older rider-app sessions end. */
+    tokenVersion: { type: Number, default: 0 },
+    /** Last GPS fix from the rider app (only sent while delivering). */
+    lastLocation: { type: { lat: Number, lng: Number, at: Date }, default: null },
   },
   { timestamps: true },
 );
@@ -180,6 +184,10 @@ const orderSchema = new Schema(
     etaMin: { type: Number, default: 20 },
     instructions: { type: String, default: '' },
     cancelReason: { type: String, default: '' },
+    /** 4 digits the customer gives the rider; set when a rider is assigned. Only the customer ever sees it. */
+    deliveryCode: { type: String, default: '' },
+    /** Why the rider couldn't deliver (from the rider app). */
+    failReason: { type: String, default: '' },
     idempotencyKey: { type: String, required: true },
   },
   { timestamps: true },

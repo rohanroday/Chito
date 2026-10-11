@@ -3,6 +3,7 @@
 // Usage (from apps/api): npm run edge
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { io } from 'socket.io-client';
 
 import { env } from '../src/config/env.js';
 import { Category, Order, Product, Rider, Store, User } from '../src/models/index.js';
@@ -60,7 +61,7 @@ async function main() {
   if (!health?.ok) throw new Error(`API not running on ${BASE}. Start it with: npm run dev`);
 
   const storeBefore = (await Store.findOne().lean())!;
-  const created = { categorySlug: '', productId: '', riderId: '' };
+  const created = { categorySlug: '', productId: '', riderId: '', rider2Id: '' };
 
   try {
     // ── Setup ──
@@ -257,6 +258,88 @@ async function main() {
     check('report for 31 Feb → 400', (await call('GET', '/admin/reports/day?date=2026-02-31', undefined, at)).status === 400);
     check('customer can’t reach admin reports', (await call('GET', '/admin/reports/day', undefined, ct)).status === 403);
 
+    console.log('\nRider app (delivery code, failed delivery, live location)');
+    await call('PATCH', `/admin/products/${created.productId}`, { stock: 10 }, at);
+    const notRider = await call('POST', '/rider/auth/otp/verify', { phone: PHONE, code: '1234' });
+    check('a customer number can’t log in to the rider app', notRider.status === 403 && notRider.json.error?.code === 'NOT_A_RIDER', notRider.json);
+    const rLogin = await call('POST', '/rider/auth/otp/verify', { phone: '+919999900077', code: '1234' });
+    const rt = rLogin.json.accessToken as string;
+    check('the rider logs in with phone + OTP', rLogin.status === 200 && !!rt && rLogin.json.rider?.name === 'Edge Rider', rLogin.json);
+    check('rider token can’t use customer routes', (await call('GET', '/orders', undefined, rt)).status === 403);
+    check('rider token can’t use admin routes', (await call('GET', '/admin/orders', undefined, rt)).status === 403);
+    check('customer token can’t use rider routes', (await call('GET', '/rider/orders', undefined, ct)).status === 403);
+    const r2 = await call('POST', '/admin/riders', { name: 'Edge Rider Two', phone: '+919999900078' }, at);
+    created.rider2Id = r2.json.id;
+    const rt2 = (await call('POST', '/rider/auth/otp/verify', { phone: '+919999900078', code: '1234' })).json.accessToken as string;
+
+    // Two orders go out with the first rider
+    const sendOut = async () => {
+      const ord = (await order(ct, [{ slug, qty: 1 }])).json;
+      await call('PATCH', `/admin/orders/${ord.id}/status`, { status: 'CONFIRMED' }, at);
+      await call('PATCH', `/admin/orders/${ord.id}/status`, { status: 'PACKED' }, at);
+      await call('POST', `/admin/orders/${ord.id}/assign-rider`, { riderId: created.riderId }, at);
+      return ord as Json;
+    };
+    const o1 = await sendOut();
+    const o2 = await sendOut();
+    const mine = (await call('GET', '/rider/orders', undefined, rt)).json as Json[];
+    const mine1 = mine.find((x) => x.id === o1.id);
+    check('the rider sees the orders given to them', !!mine1 && mine.some((x) => x.id === o2.id), mine.map((x) => x.orderNumber));
+    check('…with the cash to collect, but never the delivery code', mine1?.collect === o1.bill.grandTotal && !('deliveryCode' in (mine1 ?? {})), mine1);
+    check('another rider sees none of them', ((await call('GET', '/rider/orders', undefined, rt2)).json as Json[]).length === 0);
+    const custView = (await call('GET', `/orders/${o1.id}`, undefined, ct)).json;
+    check('the customer sees a 4-digit delivery code while it’s on the way', /^\d{4}$/.test(custView.deliveryCode ?? ''), custView.deliveryCode);
+    const adminView = ((await call('GET', '/admin/orders', undefined, at)).json as Json[]).find((x) => x.id === o1.id);
+    check('the admin does not see the code', !!adminView && !('deliveryCode' in adminView));
+
+    // Live location reaches the waiting customer and the admin
+    const custSock = io(BASE, { auth: { token: ct }, transports: ['websocket'] });
+    const seen: Json[] = [];
+    custSock.on('order:rider-location', (p: Json) => seen.push(p));
+    await new Promise((r) => setTimeout(r, 800));
+    check('impossible coordinates rejected', (await call('POST', '/rider/location', { lat: 400, lng: 88 }, rt)).status === 400);
+    const loc = await call('POST', '/rider/location', { lat: 27.2352, lng: 88.5003 }, rt);
+    await new Promise((r) => setTimeout(r, 800));
+    custSock.close();
+    check('rider location accepted', loc.json.ok === true, loc.json);
+    check('the customer’s app gets the rider’s position', seen.some((p) => p.orderId === o1.id && p.lat === 27.2352), seen);
+    const riderRow = ((await call('GET', '/admin/riders', undefined, at)).json as Json[]).find((x) => x.id === created.riderId);
+    check('the admin sees where the rider was last seen', riderRow?.lastLocation?.lat === 27.2352, riderRow?.lastLocation);
+    const reopened = (await call('GET', `/orders/${o1.id}`, undefined, ct)).json;
+    check('opening the order shows the rider’s last position right away', reopened.riderLocation?.lat === 27.2352, reopened.riderLocation);
+
+    // Order 2: wrong codes, the lock, then "couldn't deliver"
+    check('another rider can’t deliver it', (await call('POST', `/rider/orders/${o1.id}/deliver`, { code: custView.deliveryCode }, rt2)).status === 404);
+    const wrong = await call('POST', `/rider/orders/${o2.id}/deliver`, { code: '0000' }, rt);
+    check('a wrong code is refused', wrong.status === 400 && wrong.json.error?.code === 'WRONG_CODE', wrong.json);
+    for (let i = 0; i < 4; i++) await call('POST', `/rider/orders/${o2.id}/deliver`, { code: '0000' }, rt);
+    check('after 5 wrong codes the order is locked for a while', (await call('POST', `/rider/orders/${o2.id}/deliver`, { code: '0000' }, rt)).status === 429);
+    const failed = await call('POST', `/rider/orders/${o2.id}/fail`, { reason: 'Nobody at home' }, rt);
+    check('“couldn’t deliver” with a reason', failed.json.status === 'DELIVERY_FAILED' && failed.json.failReason === 'Nobody at home', failed.json);
+    check('the admin sees why', ((await call('GET', '/admin/orders', undefined, at)).json as Json[]).find((x) => x.id === o2.id)?.failReason === 'Nobody at home');
+
+    // Order 1: the right code (sent twice at once, like a double tap)
+    const cashB = (await Rider.findById(created.riderId))!.codBalance;
+    const [ok1, ok2] = await Promise.all([
+      call('POST', `/rider/orders/${o1.id}/deliver`, { code: custView.deliveryCode }, rt),
+      call('POST', `/rider/orders/${o1.id}/deliver`, { code: custView.deliveryCode }, rt),
+    ]);
+    check('the right code marks it delivered (a double tap counts once)', [ok1.status, ok2.status].sort().join() === '200,409', [ok1.status, ok2.status, ok1.json.error, ok2.json.error]);
+    const cashA = (await Rider.findById(created.riderId))!.codBalance;
+    check('the cash is added to the rider once', cashA - cashB === o1.bill.grandTotal, { cashB, cashA });
+    const custAfter = (await call('GET', `/orders/${o1.id}`, undefined, ct)).json;
+    check('the customer sees “Delivered” and the code is gone', custAfter.status === 'DELIVERED' && !custAfter.deliveryCode, custAfter.status);
+    check('the admin sees it was delivered by the rider with the code', ((await call('GET', '/admin/orders', undefined, at)).json as Json[]).find((x) => x.id === o1.id)?.deliveredBy === 'rider');
+    const rme = (await call('GET', '/rider/me', undefined, rt)).json;
+    check('the rider’s summary counts today’s delivery and cash', rme.today?.delivered >= 1 && rme.codBalance === cashA && rme.status === 'AVAILABLE', rme);
+    check('going off duty works', (await call('PATCH', '/rider/me/status', { status: 'OFF_DUTY' }, rt)).json.status === 'OFF_DUTY');
+
+    // The store logs a rider out (e.g. they left)
+    await call('POST', `/admin/riders/${created.riderId}/logout-everywhere`, {}, at);
+    check('after “log rider out” their session can’t renew', (await call('POST', '/auth/refresh', { refreshToken: rLogin.json.refreshToken })).status === 401);
+    await call('PATCH', `/admin/riders/${created.rider2Id}`, { isActive: false }, at);
+    check('an inactive rider can’t log in', (await call('POST', '/rider/auth/otp/verify', { phone: '+919999900078', code: '1234' })).status === 403);
+
     console.log('\nPassword guessing');
     const fakeEmail = `guess-${Date.now()}@example.com`;
     const tries: number[] = [];
@@ -283,6 +366,7 @@ async function main() {
     if (created.productId) await Product.deleteOne({ _id: created.productId });
     if (created.categorySlug) await Category.deleteOne({ slug: created.categorySlug });
     if (created.riderId) await Rider.deleteOne({ _id: created.riderId });
+    if (created.rider2Id) await Rider.deleteOne({ _id: created.rider2Id });
     await Store.updateOne({}, { isOpen: storeBefore.isOpen, closedMessage: storeBefore.closedMessage, openTime: storeBefore.openTime, closeTime: storeBefore.closeTime });
     // Category order may have been touched by the reorder test: put the real order back
     const cats = await Category.find().sort({ sortOrder: 1 });

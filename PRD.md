@@ -35,7 +35,7 @@ Chito is a Blinkit-style quick-commerce app built for **Singtam**. Residents can
 
 ### 1.4 Non-goals (v1)
 - A marketplace of third-party sellers. Chito sells from its own store only.
-- A delivery partner app. Riders are managed by the admin (see §6).
+- A marketplace-style delivery partner app (self-assignment, earnings, rider sign-up). The ✅ **Chito Rider** app (§5.3a) is a tool for the store's own riders: the admin still assigns every order.
 - Delivery outside the 3 km service radius.
 - Restaurant or cooked-food delivery.
 
@@ -77,7 +77,7 @@ These realities shape the product. **Every feature must respect them.**
 | **Customer: student or young professional** | Snacks, instant food, toiletries | UPI, quick checkout, offers |
 | **Customer: elderly or uphill resident** | Hard to walk to the bazaar | Simple UI, big text, phone support, landmark addresses |
 | **Admin / store manager** (Rohan and staff) | Runs the store, packs orders, assigns riders | Live order queue, stock control, rider assignment, reports |
-| **Rider** (operational actor, *no app in v1*) | Waits at the store and delivers orders | Gets the order slip and customer phone/address from the admin, collects COD |
+| **Rider** (uses the ✅ Chito Rider app) | Waits at the store and delivers orders | Sees assigned orders live, calls the receiver, navigates, collects COD, confirms delivery with the customer's code |
 
 ---
 
@@ -177,13 +177,23 @@ Web app (Next.js), used on a desktop or tablet at the store.
 - Actions: Accept / Reject (with reason, auto-refund if prepaid), Mark packed, **Assign rider**, Mark delivered, Cancel.
 - Printable **order slip** (for rider: items, address, landmark, phone, amount to collect if COD).
 
-### 5.3 Rider management and allocation (no rider app in v1)
+### 5.3 Rider management and allocation
 - Rider roster: name, phone, photo, vehicle (scooter/bike/on-foot), active/inactive.
 - **Availability board:** each rider is *Available at store* / *On delivery* / *Off duty*.
 - **Assign rider** modal shows riders currently *Available at store*, ordered by who has waited longest. Admin picks one, and the order becomes *Out for delivery* while the rider becomes *On delivery*.
 - A rider can carry **multiple orders** (batching for orders in the same area).
-- When admin marks the order *Delivered* (rider calls/returns), the rider goes back to *Available*.
+- When the order is *Delivered* (the rider enters the customer's code in the rider app, or the admin uses **Mark delivered without code**), the rider goes back to *Available*. The order drawer shows who confirmed it.
+- ✅ Riders page: "📍 seen 2 min ago · Map" from the rider's live location, and **Log out of app** (also done when a rider is removed).
 - **COD collection ledger:** cash each rider must hand over, with a mark-as-settled action at the end of shift.
+
+### 5.3a ✅ Chito Rider app (separate Android app, `apps/rider`)
+- **Login:** phone + OTP. Works only for a phone saved as an **active rider** in the admin ("This number isn't a Chito rider. Ask the store."). Rider tokens can't use customer or admin routes.
+- **Home:** On duty / Off duty switch (locked while on a delivery), today's **deliveries** and **cash collected**, **cash to hand in** (`codBalance`), live list of assigned orders (the phone vibrates on a new one), failed and delivered-today lists, pull to refresh, call the store.
+- **Delivery screen:** receiver name with a big **Call** button ("ordered by X for Mom"), landmark/area/directions with **Open in Google Maps** (directions to the pin), items, **"Collect ₹X cash"** or "Paid online · collect nothing".
+- **Proof of delivery:** a random **4-digit delivery code** is created when a rider is assigned. Only the customer sees it (order screen, while *Out for delivery*; "Send this code to Mom" when ordered for someone else). The rider enters it to mark *Delivered*. Wrong code → refused; 5 wrong tries lock that order for 10 minutes. The admin can still override.
+- **Couldn't deliver:** reasons (nobody at home, phone not answered, wrong address, customer refused, road blocked, other + note) → *Delivery failed*; the admin sees the reason and re-assigns or cancels.
+- **Live location:** while the rider has an active delivery and the app is open, the phone sends its position about every 15 s / 50 m (kept awake). The admin's Riders page and the customer's tracking map (🛵 moving toward the delivery pin) update live; opening the tracking screen shows the last position from the past 10 minutes straight away.
+- **Known gap:** location is shared only while the app is open. Tracking with the phone locked needs Android background-location permission and Play Store review (later).
 
 ### 5.4 Catalog and inventory
 - Categories and sub-categories (name, image, sort order, active). ✅ Reorder by **drag and drop**, by **typing a position**, or with **top/bottom** buttons, next to a **live phone preview** of the app's Home grid (first 9 visible categories). Hiding a category hides its products everywhere, including at checkout.
@@ -241,9 +251,9 @@ PLACED ──(admin accepts)──► CONFIRMED ──► PACKED ──(admin as
 
 **Rider allocation (v1, manual):**
 1. Riders wait at the store. The admin board shows them as *Available*.
-2. When an order is *Packed*, the admin clicks **Assign rider**, picks an available rider and hands over the order slip.
+2. When an order is *Packed*, the admin clicks **Assign rider**, picks an available rider and hands over the order slip. The order appears instantly in that rider's app, and the customer gets a delivery code.
 3. The customer gets a push notification: "Your order is on the way with *Pemba* 🛵", with a call button.
-4. The rider delivers and collects COD if needed, then calls or returns to the store. The admin marks the order *Delivered*.
+4. The rider delivers, collects COD if needed, and enters the customer's code → *Delivered* on all screens at once. If they can't deliver, they report why from the app.
 5. At end of shift, COD cash is reconciled per rider.
 
 **Valid status transitions** (enforced on server):
@@ -266,7 +276,7 @@ PLACED ──(admin accepts)──► CONFIRMED ──► PACKED ──(admin as
 | **Performance** | Home screen interactive in < 3 s on a ₹8–10k Android phone on 4G. APK < 40 MB. Product images served as WebP, ≤ 100 KB thumbnails (ImageKit URL transforms, `f-auto`). |
 | **Network resilience** | Cached catalog (TanStack Query persist), retry with backoff, clear offline banner, idempotent order creation (idempotency key). |
 | **Availability** | API uptime ≥ 99.5% during store hours. MongoDB Atlas automated backups. |
-| **Security** | HTTPS only. Helmet, CORS, input validation (Zod), no card data stored. Admin routes role-protected. **Auth:** JWT access (15 min) + refresh tokens (30 days customer / 7 days admin) carrying a token version. Logout and "log out everywhere" revoke them, and refresh re-checks the account every time. Phone tokens live in SecureStore (Keychain / Keystore). **Guessing limits:** OTP send 3/10 min per number, 8 wrong OTPs per number per 10 min, 5 wrong admin passwords per email per 15 min (429). **Payments:** Razorpay signature + webhook secret verification, server-decided "paid". **Input:** coordinates range-checked, prices/stock/fees always from the DB, malformed ids or JSON answered with 4xx (never 500). **Concurrency:** atomic stock decrement, idempotent order creation (double taps return the same order), atomic status/rider/cash changes. |
+| **Security** | HTTPS only. Helmet, CORS, input validation (Zod), no card data stored. Admin routes role-protected. **Auth:** JWT access (15 min) + refresh tokens (30 days customer / 7 days admin and rider) carrying a token version. Logout and "log out everywhere" revoke them, and refresh re-checks the account every time. Phone tokens live in SecureStore (Keychain / Keystore). **Guessing limits:** OTP send 3/10 min per number, 8 wrong OTPs per number per 10 min, 5 wrong admin passwords per email per 15 min (429). **Payments:** Razorpay signature + webhook secret verification, server-decided "paid". **Input:** coordinates range-checked, prices/stock/fees always from the DB, malformed ids or JSON answered with 4xx (never 500). **Concurrency:** atomic stock decrement, idempotent order creation (double taps return the same order), atomic status/rider/cash changes. |
 | **Privacy** | Collect only phone, name, addresses, location. Privacy policy in app. Account deletion option (Play Store requirement). |
 | **Accessibility** | 48dp touch targets, supports system font scaling, sufficient contrast (see DESIGN.md). |
 | **Localization** | All strings in i18n files. Languages: English (launch), Nepali, Hindi. ₹ formatting `en-IN`. Time zone `Asia/Kolkata`. |
@@ -339,8 +349,8 @@ All money values are stored as **integer paise** (₹1 = 100). All timestamps ar
 | **categories** | `name`, `slug`, `image`, `parentId`, `sortOrder`, `isActive` | `slug` unique; `parentId` |
 | **products** | `name`, `altNames[]`, `slug`, `description`, `images[]`, `unit`, `mrp`, `price`, `categoryId`, `tags[]`, `maxPerOrder`, `stock`, `lowStockThreshold`, `hsn`, `gstRate`, `isActive` | text index on `name`+`altNames`; `categoryId`; `slug` unique |
 | **carts** | `userId`, `items[{productId, qty}]` | `userId` unique |
-| **orders** | `orderNumber` (e.g. CH-000123), `userId`, `items[{productId, name, unit, price, mrp, qty}]` (snapshot), `addressSnapshot`, `distanceKm`, `bill{itemTotal, deliveryFee, smallCartFee, handlingFee, discount, grandTotal}`, `couponCode`, `paymentMethod` (`COD`/`ONLINE`), `paymentStatus`, `status`, `statusHistory[{status, at, by}]`, `riderId`, `deliverySlot`, `instructions`, `rating`, `cancelReason`, `idempotencyKey` | `userId+createdAt`; `status`; `riderId`; `orderNumber` unique; `idempotencyKey` unique |
-| **riders** | `name`, `phone`, `photo`, `vehicle`, `status` (`AVAILABLE`/`ON_DELIVERY`/`OFF_DUTY`), `availableSince`, `isActive`, `codBalance` | `status` |
+| **orders** | `orderNumber` (e.g. CH-000123), `userId`, `items[{productId, name, unit, price, mrp, qty}]` (snapshot), `addressSnapshot`, `distanceKm`, `bill{itemTotal, deliveryFee, smallCartFee, handlingFee, discount, grandTotal}`, `couponCode`, `paymentMethod` (`COD`/`ONLINE`), `paymentStatus`, `status`, `statusHistory[{status, at, by}]`, `riderId`, `deliveryCode` (customer-only), `failReason`, `deliverySlot`, `instructions`, `rating`, `cancelReason`, `idempotencyKey` | `userId+createdAt`; `status`; `riderId`; `orderNumber` unique; `idempotencyKey` unique |
+| **riders** | `name`, `phone`, `photo`, `vehicle`, `status` (`AVAILABLE`/`ON_DELIVERY`/`OFF_DUTY`), `availableSince`, `isActive`, `codBalance`, `tokenVersion`, `lastLocation{lat,lng,at}` | `status` |
 | **payments** | `orderId`, `razorpayOrderId`, `razorpayPaymentId`, `amount`, `status`, `method`, `raw` | `razorpayOrderId` unique |
 | **codSettlements** | `riderId`, `orders[]`, `amount`, `settledAt`, `settledBy` | `riderId` |
 | **coupons** | `code`, `type`, `value`, `minOrder`, `maxDiscount`, `perUserLimit`, `totalLimit`, `usedCount`, `validFrom`, `validTo`, `firstOrderOnly`, `isActive` | `code` unique |
@@ -379,7 +389,8 @@ db.stores.findOne({
 | **Orders** | `POST /orders` (Idempotency-Key header; address may carry `recipientName/recipientPhone`; `returnUrl` for online) · `GET /orders` · `GET /orders/:id` · `POST /orders/:id/cancel` · ✅ `POST /orders/:id/payment/refresh` · `POST /orders/:id/rate` (later) · `GET /orders/:id/invoice` (later) |
 | **Payments** | ✅ `GET /payments/razorpay/callback` (signed redirect from the Payment Link) · ✅ `POST /webhooks/razorpay` (`payment_link.paid`, raw-body signature check) |
 | **Admin** | `POST /admin/auth/login` · `GET /admin/orders?status=` · `PATCH /admin/orders/:id/status` · `POST /admin/orders/:id/assign-rider` · `POST /admin/orders/:id/cancel` · CRUD `/admin/products`, `/admin/categories` (+ `POST /admin/categories/reorder`), `/admin/riders` · `POST /admin/riders/:id/settle-cod` · `GET/PATCH /admin/store` · `POST /admin/store/open` · ✅ `GET /admin/reports/day?date=` · ✅ `GET /admin/reports/days` · `GET /admin/stats/today` · `GET /admin/customers` · ✅ `POST /admin/customers/:id/logout-everywhere` · `POST /admin/uploads` · later: `/admin/coupons`, `/admin/banners` |
-| **Realtime (Socket.io)** | Rooms: `user:{id}`, `order:{id}`, `admin`. Events: `order:new`, `order:updated`, `store:status` |
+| **Rider** ✅ | `POST /rider/auth/otp/verify` · `GET /rider/me` · `PATCH /rider/me/status` · `GET /rider/orders` · `POST /rider/orders/:id/deliver {code}` · `POST /rider/orders/:id/fail {reason}` · `POST /rider/location {lat,lng}` · admin: `POST /admin/riders/:id/logout-everywhere` |
+| **Realtime (Socket.io)** | Rooms: `user:{id}`, `rider:{id}`, `admin`. Events: `order:new`, `order:updated`, `store:status`, `order:assigned` (rider), `rider:location` (admin), `order:rider-location` (customer) |
 
 ---
 
@@ -390,7 +401,7 @@ db.stores.findOne({
 | **Phase 0: Setup** | Monorepo, Expo app skeleton, API skeleton, Atlas, CI, design tokens, store location fixed | 1 week |
 | **Phase 1: MVP (soft launch)** | OTP login, serviceability (3 km), addresses, catalog, search, cart, **COD** checkout, order tracking (polling), admin order queue, **manual rider assignment**, catalog & stock management, store settings | 4–6 weeks |
 | **Phase 2: Public launch** | **Razorpay UPI/online**, push notifications, Socket.io live updates, coupons, banners, invoices, ratings, Nepali & Hindi, scheduled slots, Play Store release | 3–4 weeks |
-| **Phase 3: Growth** | **Rider app** (Expo) with live GPS tracking and self-assignment, loyalty/Chito coins, subscriptions (daily milk), road-distance serviceability (Google Distance Matrix), iOS release, analytics | Ongoing |
+| **Phase 3: Growth** | Rider app: background GPS (phone locked) and self-assignment (✅ the basic rider app with delivery codes and live location shipped early), loyalty/Chito coins, subscriptions (daily milk), road-distance serviceability (Google Distance Matrix), iOS release, analytics | Ongoing |
 
 **Soft launch plan:** start with friends, family and one or two localities near the store (e.g. Singtam Bazaar), with limited hours. Then expand to the full 3 km.
 

@@ -13,6 +13,14 @@ export function minutesSince(iso: string, now: number) {
   return Math.max(0, Math.floor((now - new Date(iso).getTime()) / 60000));
 }
 
+/** "12 min", "3 h 5 min", "2 days" — readable however long it has been. */
+export function duration(mins: number) {
+  if (mins < 60) return `${mins} min`;
+  if (mins < 24 * 60) return `${Math.floor(mins / 60)} h${mins % 60 ? ` ${mins % 60} min` : ''}`;
+  const days = Math.floor(mins / (24 * 60));
+  return `${days} ${days === 1 ? 'day' : 'days'}`;
+}
+
 export function imageUrl(path: string | undefined, width: number) {
   if (!path) return '';
   const base = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? '';

@@ -6,8 +6,8 @@ import { z } from 'zod';
 import { env } from '../config/env.js';
 import { issueTokens, requireCustomer, userId, verifyRefresh } from '../lib/auth.js';
 import { badRequest, HttpError, notFound, parse, unauthorized } from '../lib/http.js';
-import { failureLimiter } from '../lib/rate-limit.js';
-import { Admin, Category, Order, Otp, Product, User } from '../models/index.js';
+import { checkOtp, phoneSchema } from '../lib/otp.js';
+import { Admin, Category, Order, Otp, Product, Rider, User } from '../models/index.js';
 import { resolveSharedLocation } from '../lib/maplink.js';
 import { cancelOrder, createOrder, markOrderPaid, refreshOnlinePayment, serializeOrder } from '../services/orders.js';
 import { verifyCallbackSignature, verifyWebhookSignature } from '../services/razorpay.js';
@@ -15,8 +15,6 @@ import { checkServiceability, getStore, publicStore } from '../services/store.js
 
 export const customer = Router();
 
-const phoneSchema = z.string().regex(/^\+91[6-9]\d{9}$/, 'Enter a valid Indian mobile number');
-const DEV_OTP = '1234';
 const OTP_TTL_MS = 5 * 60 * 1000;
 
 // ── Auth (phone + OTP) ──
@@ -34,30 +32,9 @@ customer.post('/auth/otp/send', async (req, res) => {
   throw new HttpError(503, 'SMS_NOT_CONFIGURED', 'SMS is not set up yet. Turn on OTP_DEV_MODE for testing.');
 });
 
-// On top of the 5-tries-per-OTP lock: 8 wrong codes for a number in 10 minutes → wait (stops guessing across new OTPs)
-const otpLimit = failureLimiter({ max: 8, windowMs: 10 * 60 * 1000, message: 'Too many wrong OTPs.' });
-
 customer.post('/auth/otp/verify', async (req, res) => {
   const { phone, code } = parse(z.object({ phone: phoneSchema, code: z.string().regex(/^\d{4}$/) }), req.body);
-  otpLimit.assertAllowed(phone);
-  if (env.OTP_DEV_MODE) {
-    if (code !== DEV_OTP) {
-      otpLimit.fail(phone);
-      throw badRequest('WRONG_OTP', 'Wrong OTP. In test mode the OTP is 1234.');
-    }
-  } else {
-    const otp = await Otp.findOne({ phone }).sort({ createdAt: -1 });
-    if (!otp || otp.expiresAt < new Date()) throw badRequest('OTP_EXPIRED', 'OTP expired. Please request a new one.');
-    if (otp.attempts >= 5) throw badRequest('OTP_LOCKED', 'Too many wrong attempts. Request a new OTP.');
-    if (!(await bcrypt.compare(code, otp.codeHash))) {
-      otp.attempts += 1;
-      await otp.save();
-      otpLimit.fail(phone);
-      throw badRequest('WRONG_OTP', 'Wrong OTP. Please try again.');
-    }
-    await Otp.deleteMany({ phone });
-  }
-  otpLimit.succeed(phone);
+  await checkOtp(phone, code);
   const user = await User.findOneAndUpdate({ phone }, { $setOnInsert: { phone } }, { upsert: true, returnDocument: 'after' });
   if (user.isBlocked) throw new HttpError(403, 'BLOCKED', 'Your account is blocked. Please contact Chito.');
   res.json({
@@ -76,6 +53,11 @@ customer.post('/auth/refresh', async (req, res) => {
     const u = await User.findById(c.sub).catch(() => null);
     if (!u || u.isBlocked || (c.ver ?? 0) !== u.tokenVersion) throw unauthorized();
     res.json(issueTokens({ sub: c.sub, kind: 'customer' }, u.tokenVersion));
+  } else if (c.kind === 'rider') {
+    // A rider the store removed (or made inactive) can't keep using the rider app
+    const r = await Rider.findById(c.sub).catch(() => null);
+    if (!r || !r.isActive || (c.ver ?? 0) !== (r.tokenVersion ?? 0)) throw unauthorized();
+    res.json(issueTokens({ sub: c.sub, kind: 'rider' }, r.tokenVersion ?? 0));
   } else {
     const a = await Admin.findById(c.sub).catch(() => null);
     if (!a || (c.ver ?? 0) !== a.tokenVersion) throw unauthorized();
@@ -88,7 +70,7 @@ customer.post('/auth/refresh', async (req, res) => {
 customer.post('/auth/logout', async (req, res) => {
   const { refreshToken } = parse(z.object({ refreshToken: z.string() }), req.body);
   const c = readRefresh(refreshToken);
-  const Model = c.kind === 'admin' ? Admin : User;
+  const Model = c.kind === 'admin' ? Admin : c.kind === 'rider' ? Rider : User;
   // Only the session that's still current can end it (an old token can't log someone out).
   // Accounts from before tokenVersion existed have no field saved yet; that counts as version 0.
   const ver = c.ver ?? 0;
@@ -236,7 +218,13 @@ customer.get('/orders', requireCustomer, async (req, res) => {
 customer.get('/orders/:id', requireCustomer, async (req, res) => {
   const o = await Order.findOne({ _id: req.params.id, userId: userId(req) }).catch(() => null);
   if (!o) throw notFound('Order');
-  res.json(serializeOrder(o));
+  // While it's on the way, include where the rider was last seen so the map isn't empty until the next GPS ping
+  let riderLocation = null;
+  if (o.status === 'OUT_FOR_DELIVERY' && o.riderId) {
+    const loc = (await Rider.findById(o.riderId, { lastLocation: 1 }).lean())?.lastLocation;
+    if (loc?.at && Date.now() - new Date(loc.at).getTime() < 10 * 60_000) riderLocation = { lat: loc.lat, lng: loc.lng, at: loc.at };
+  }
+  res.json({ ...serializeOrder(o), riderLocation });
 });
 
 /** After paying on Razorpay's page, the app asks the server to confirm (works even if the callback never arrived). */

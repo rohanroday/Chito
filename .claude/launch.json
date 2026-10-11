@@ -18,6 +18,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "apps/admin", "run", "dev", "--", "--port", "3000"],
       "port": 3000
+    },
+    {
+      "name": "chito-rider-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/rider", "run", "web", "--", "--port", "8082"],
+      "port": 8082
     }
   ]
 }

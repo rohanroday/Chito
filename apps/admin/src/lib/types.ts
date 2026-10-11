@@ -37,6 +37,10 @@ export type Order = {
   customer: { name: string; phone: string };
   instructions: string;
   cancelReason: string;
+  /** Why the rider couldn't deliver (from the rider app). */
+  failReason?: string;
+  /** Who marked it delivered: the rider with the customer's code, or an admin override. */
+  deliveredBy?: 'rider' | 'admin' | null;
   createdAt: string;
 };
 
@@ -50,6 +54,8 @@ export type Rider = {
   codBalance: number;
   isActive: boolean;
   activeOrders?: number;
+  /** Last GPS fix from the Chito Rider app (shared only while delivering). */
+  lastLocation?: { lat: number; lng: number; at: string } | null;
 };
 
 export type Product = {

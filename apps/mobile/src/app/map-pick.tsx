@@ -8,6 +8,7 @@ import { Button } from '@/components/Button';
 import type { MapMessage } from '@/components/map/map-html';
 import { MapView } from '@/components/map/MapView';
 import { Txt } from '@/components/Txt';
+import { distance } from '@/lib/format';
 import { finishMapPick } from '@/lib/map-pick';
 import { kmBetween } from '@/lib/pin';
 import type { Pin } from '@/state/auth';
@@ -96,8 +97,8 @@ export default function MapPick() {
           {inside ? <CircleCheck size={20} color={colors.leaf} /> : <CircleAlert size={20} color={colors.vermilion} />}
           <Txt variant="strong" color={inside ? colors.leaf : colors.vermilion} style={{ flex: 1 }}>
             {inside
-              ? `About ${km} km from our store · inside the circle we deliver to`
-              : `About ${km} km from our store · outside our ${store.serviceRadiusKm} km circle`}
+              ? `About ${distance(km)} from our store · inside the circle we deliver to`
+              : `About ${distance(km)} from our store · outside our ${store.serviceRadiusKm} km circle`}
           </Txt>
         </View>
         <Button title="Use this spot" onPress={() => finishMapPick(pin)} disabled={state.kind === 'error'} />

@@ -1,9 +1,10 @@
 import mongoose, { type Types } from 'mongoose';
+import { randomInt } from 'node:crypto';
 
 import { fromPoint, type LatLng, toPoint } from '../lib/geo.js';
 import { badRequest, conflict, HttpError, notFound, unauthorized } from '../lib/http.js';
 import { ACTIVE_STATUSES, canTransition, CUSTOMER_CANCELLABLE, type OrderStatus } from '../lib/order-status.js';
-import { emitToAdmins, emitToUser } from '../lib/realtime.js';
+import { emitToAdmins, emitToRider, emitToUser } from '../lib/realtime.js';
 import { Category, Counter, Order, type OrderInstance, Product, Rider, User } from '../models/index.js';
 import { cancelPaymentLink, createPaymentLink, getPaymentLink, refundPayment } from './razorpay.js';
 import { checkServiceability, computeBill, etaFor, getStore, isOpenNow } from './store.js';
@@ -54,6 +55,11 @@ export function serializeOrder(o: OrderHydrated, forAdmin = false) {
     },
     instructions: o.instructions,
     cancelReason: o.cancelReason,
+    failReason: o.failReason ?? '',
+    // Who marked it delivered: "rider" (with the customer's code) or "admin" (override without a code)
+    deliveredBy: deliveredBy(o),
+    // The code proves delivery, so ONLY the customer sees it, and only while the rider is on the way
+    ...(!forAdmin && o.status === 'OUT_FOR_DELIVERY' && o.deliveryCode && { deliveryCode: o.deliveryCode }),
     // Where to pay, while an online order is waiting for payment
     payment: o.status === 'PAYMENT_PENDING' && o.payment?.linkUrl ? { url: o.payment.linkUrl, expiresAt: o.payment.expiresAt } : null,
     createdAt: (o as unknown as { createdAt: Date }).createdAt,
@@ -61,9 +67,27 @@ export function serializeOrder(o: OrderHydrated, forAdmin = false) {
   };
 }
 
+function deliveredBy(o: OrderHydrated): 'rider' | 'admin' | null {
+  const h = [...o.statusHistory].reverse().find((x) => x.status === 'DELIVERED');
+  if (!h) return null;
+  return h.by?.startsWith('rider:') ? 'rider' : 'admin';
+}
+
+/** What the rider app shows: everything needed at the door, never the delivery code. */
+export function serializeOrderForRider(o: OrderHydrated) {
+  const full = serializeOrder(o, true);
+  const { deliveryCode: _hidden, ...rest } = full as typeof full & { deliveryCode?: string };
+  return {
+    ...rest,
+    // How much cash to collect at the door (0 when paid online)
+    collect: o.paymentMethod === 'COD' && o.paymentStatus !== 'PAID' ? (o.bill?.grandTotal ?? 0) : 0,
+  };
+}
+
 function broadcast(o: OrderHydrated, event: 'order:new' | 'order:updated') {
   emitToAdmins(event, serializeOrder(o, true));
   emitToUser(o.userId.toString(), 'order:updated', serializeOrder(o));
+  if (o.riderId) emitToRider(o.riderId.toString(), 'order:updated', serializeOrderForRider(o));
 }
 
 async function nextOrderNumber(session: mongoose.ClientSession) {
@@ -297,8 +321,11 @@ export async function expireUnpaidOrders() {
   }
 }
 
-/** Admin moves an order forward (not for assigning riders or cancelling). */
-export async function advanceOrder(orderId: string, to: OrderStatus, adminId: string) {
+/**
+ * Moves an order forward (not for assigning riders or cancelling).
+ * `by` is recorded in the history: "admin:<id>" or "rider:<id>".
+ */
+export async function advanceOrder(orderId: string, to: OrderStatus, by: string, extra: { failReason?: string } = {}) {
   if (to === 'CANCELLED') throw badRequest('USE_CANCEL', 'Use the cancel action');
   if (to === 'OUT_FOR_DELIVERY') throw badRequest('USE_ASSIGN', 'Assign a rider to send the order out');
   const current = await Order.findById(orderId);
@@ -310,8 +337,12 @@ export async function advanceOrder(orderId: string, to: OrderStatus, adminId: st
   const o = await Order.findOneAndUpdate(
     { _id: current._id, status: from },
     {
-      $set: { status: to, ...(to === 'DELIVERED' && current.paymentMethod === 'COD' && { paymentStatus: 'PAID' }) },
-      $push: { statusHistory: { status: to, at: new Date(), by: `admin:${adminId}` } },
+      $set: {
+        status: to,
+        ...(to === 'DELIVERED' && current.paymentMethod === 'COD' && { paymentStatus: 'PAID' }),
+        ...(to === 'DELIVERY_FAILED' && { failReason: extra.failReason ?? '' }),
+      },
+      $push: { statusHistory: { status: to, at: new Date(), by } },
     },
     { returnDocument: 'after' },
   );
@@ -335,7 +366,14 @@ export async function assignRider(orderId: string, riderId: string, adminId: str
   const o = await Order.findOneAndUpdate(
     { _id: current._id, status: from },
     {
-      $set: { riderId: rider._id, rider: { name: rider.name, phone: rider.phone }, status: 'OUT_FOR_DELIVERY' },
+      // A new 4-digit code for every trip (also when re-assigned after a failed attempt)
+      $set: {
+        riderId: rider._id,
+        rider: { name: rider.name, phone: rider.phone },
+        status: 'OUT_FOR_DELIVERY',
+        deliveryCode: String(randomInt(1000, 10000)),
+        failReason: '',
+      },
       $push: { statusHistory: { status: 'OUT_FOR_DELIVERY', at: new Date(), by: `admin:${adminId}` } },
     },
     { returnDocument: 'after' },
@@ -344,6 +382,7 @@ export async function assignRider(orderId: string, riderId: string, adminId: str
   await Rider.updateOne({ _id: rider._id }, { status: 'ON_DELIVERY' }); // a rider may carry several orders (batching)
   rider.status = 'ON_DELIVERY';
   broadcast(o, 'order:updated');
+  emitToRider(rider._id.toString(), 'order:assigned', serializeOrderForRider(o));
   emitToAdmins('rider:updated', { id: rider._id.toString(), status: rider.status });
   return o;
 }

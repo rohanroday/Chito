@@ -9,6 +9,7 @@ import { api, errorMessage } from '@/api/client';
 import { getSocket } from '@/api/socket';
 import type { Order } from '@/api/types';
 import { Button } from '@/components/Button';
+import { TrackMap } from '@/components/map/TrackMap';
 import { MountainPath } from '@/components/MountainPath';
 import { DentilBorder, PrayerFlags } from '@/components/ornaments';
 import { Txt } from '@/components/Txt';
@@ -84,12 +85,17 @@ export default function OrderTracking() {
   }, [id, payNow, receive]);
 
   // Live updates from the store + polling fallback while the order is moving
+  const [riderAt, setRiderAt] = useState<{ lat: number; lng: number } | null>(null);
   useEffect(() => {
     const socket = getSocket();
     const onUpdate = (o: Order) => o.id === id && receive(o);
+    // The rider app shares its position while this order is on the way
+    const onRider = (p: { orderId: string; lat: number; lng: number }) => p.orderId === id && setRiderAt({ lat: p.lat, lng: p.lng });
     socket.on('order:updated', onUpdate);
+    socket.on('order:rider-location', onRider);
     return () => {
       socket.off('order:updated', onUpdate);
+      socket.off('order:rider-location', onRider);
     };
   }, [id, receive]);
 
@@ -219,11 +225,51 @@ export default function OrderTracking() {
           </View>
         )}
 
-        {order.status === 'DELIVERY_FAILED' && (
-          <View style={{ backgroundColor: colors.vermilion50, borderRadius: radius.md, padding: 12 }}>
-            <Txt variant="strong" color={colors.vermilion}>
-              Our rider couldn&apos;t reach you. The store will call you, or tap below to call us.
+        {order.status === 'OUT_FOR_DELIVERY' && !!order.deliveryCode && (
+          <View style={{ alignItems: 'center', gap: 6, backgroundColor: colors.gold50, borderRadius: radius.lg, borderWidth: 1.5, borderColor: colors.goldDeep, padding: 14 }}>
+            <Txt variant="strong" color={colors.wood} style={{ textAlign: 'center' }}>
+              {order.address.recipientName
+                ? `Send this code to ${order.address.recipientName}. The rider asks for it at the door.`
+                : 'Give this code to the rider when your order arrives'}
             </Txt>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              {order.deliveryCode.split('').map((d, i) => (
+                <View key={i} style={{ width: 52, height: 60, borderRadius: radius.md, backgroundColor: colors.white, borderWidth: 2, borderColor: colors.maroon, alignItems: 'center', justifyContent: 'center' }}>
+                  <Txt variant="display" color={colors.maroon}>
+                    {d}
+                  </Txt>
+                </View>
+              ))}
+            </View>
+            <Txt variant="caption" color={colors.muted}>
+              Don&apos;t share it before the rider is at the door.
+            </Txt>
+          </View>
+        )}
+
+        {order.status === 'OUT_FOR_DELIVERY' && order.address.location && (
+          <View style={{ height: 230, borderRadius: radius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.line }}>
+            <TrackMap home={order.address.location} rider={riderAt ?? order.riderLocation ?? null} />
+            {!(riderAt ?? order.riderLocation) && (
+              <View style={{ position: 'absolute', left: 10, right: 10, bottom: 10, backgroundColor: colors.card, borderRadius: radius.md, padding: 8 }}>
+                <Txt variant="caption" color={colors.muted} style={{ textAlign: 'center' }}>
+                  The rider&apos;s position appears here once they start moving.
+                </Txt>
+              </View>
+            )}
+          </View>
+        )}
+
+        {order.status === 'DELIVERY_FAILED' && (
+          <View style={{ backgroundColor: colors.vermilion50, borderRadius: radius.md, padding: 12, gap: 4 }}>
+            <Txt variant="strong" color={colors.vermilion}>
+              Our rider couldn&apos;t deliver this time. The store will call you, or tap below to call us.
+            </Txt>
+            {!!order.failReason && (
+              <Txt variant="caption" color={colors.vermilion}>
+                Rider said: {order.failReason}
+              </Txt>
+            )}
           </View>
         )}
 

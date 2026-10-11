@@ -9,7 +9,7 @@ Guidance for Claude Code (and any AI assistant) working in this repo.
 - **Design:** "Gompa" monastery-inspired theme (maroon + gold + turquoise, parchment background, arched cards, left category rail with prayer-flag edges, raised "Jhola" cart tab). It must **not** look like Blinkit. Respect the cultural rules in DESIGN.md §5.1.
 - **Delivery only within 3 km** (straight-line) of the store. This is enforced **server-side**.
 - **Apps:** Customer app (React Native + Expo, Android-first) and Admin dashboard (Next.js web).
-- **No rider app in v1.** Riders wait at the store and the **admin assigns orders to riders** from the dashboard.
+- **Chito Rider** (`apps/rider`, separate Android app): riders wait at the store, the **admin assigns orders** from the dashboard, and the rider confirms delivery in the app with the customer's 4-digit code.
 - **Payments:** Cash on Delivery + Razorpay (UPI/cards/wallets).
 - **Backend:** Node.js + Express + TypeScript + MongoDB Atlas (Mongoose).
 
@@ -19,6 +19,7 @@ Full requirements are in [PRD.md](PRD.md). The visual system is in [DESIGN.md](D
 ```
 apps/
   mobile/     # Expo app (Expo Router, Zustand, socket.io-client)
+  rider/      # Expo app for riders ("Chito Rider", com.chito.rider)
   admin/      # Next.js 16 App Router + Tailwind v4
   api/        # Express + Mongoose + Socket.io
     seed/     # ✅ categories.json (24), products.json (179), images/<folder>/*.jpg (200)
@@ -28,13 +29,13 @@ packages/
 ```
 
 ## Current state (2026-10-05)
-Three standalone npm projects (not yet a pnpm workspace). All three are built, connected and tested end to end.
+Four standalone npm projects (not yet a pnpm workspace). All are built, connected and tested end to end.
 
 - ✅ **`apps/api`**: Express 5 + Mongoose 9 + Socket.io on MongoDB Atlas (db `chito`).
   - Routes: `src/routes/customer.ts`, `src/routes/admin.ts`.
   - Business rules: `src/services/orders.ts` (create with transaction + atomic stock, cancel, advance, assignRider) and `src/services/store.ts` (hours in IST, serviceability, bill).
   - Status map: `src/lib/order-status.ts`.
-  - Seeded by `scripts/seed.ts`. `scripts/e2e.ts` runs 93 checks (`npm run e2e`) and `scripts/edge.ts` 71 edge-case/abuse checks (`npm run edge`) against a running server. Both clean up after themselves, even after a crash; run both after any API change. Razorpay test mode allows ~30 payment links a day: when exhausted, e2e skips the online-payment checks with a note.
+  - Seeded by `scripts/seed.ts`. `scripts/e2e.ts` runs ~93 checks (78 when the online-payment part is skipped; `npm run e2e`) and `scripts/edge.ts` 99 edge-case/abuse checks (`npm run edge`) against a running server. Both clean up after themselves, even after a crash; run both after any API change. Razorpay test mode allows ~30 payment links a day: when exhausted, e2e skips the online-payment checks with a note.
   - Robustness rules (keep them):
     - Library errors map to 4xx in `src/lib/http.ts` (bad JSON → 400, too big → 413, bad ObjectId → 404, duplicate key → 409).
     - Order status, rider assignment and COD settlement are atomic conditional updates (double clicks can't double-count).
@@ -65,13 +66,20 @@ Three standalone npm projects (not yet a pnpm workspace). All three are built, c
   - Address pins come from GPS, a full-screen map (`src/app/map-pick.tsx` + `src/components/map/`: Leaflet + OpenStreetMap tiles in a WebView, iframe on web; never put the WebView in a Modal (unreliable on Android); swap for Google Maps before launch, OSM's tile policy forbids heavy app use) or a pasted shared location.
   - Online payment: `src/lib/payment.ts` opens the Razorpay page (expo-web-browser) and then asks the server; the tracking screen shows "Pay now" while `PAYMENT_PENDING`. The app sends `returnUrl` (= `Linking.createURL('payment-return/ORDER_ID')`, so `exp://…` in Expo Go and `chito://…` in builds) with ONLINE orders; the server only accepts `chito://` (plus `exp://` outside production) and the result page redirects there → `src/app/payment-return/[id].tsx` goes back to the order screen.
   - Home shelves (`src/components/Shelf.tsx`) show a peeking card, an arrow, "See all" and a one-time nudge so sideways scrolling is obvious.
+- ✅ **`apps/rider`** ("Chito Rider", package `com.chito.rider`, scheme `chitorider`): Expo SDK 57, same Gompa theme. Small blocks (theme, `Txt`, `Button`, ornaments, `api/client|session|socket`, storage, format) are **copied** from `apps/mobile`; keep fixes in sync until a shared package exists.
+  - Server: `src/routes/rider.ts` at `/api/v1/rider`. Login = OTP (`src/lib/otp.ts`, shared with customers) and only for an **active** Rider's phone (else 403 `NOT_A_RIDER`). Token kind `rider` (`requireRider`), 7-day refresh, `Rider.tokenVersion` (admin "Log out of app" / removing a rider ends sessions). Riders only ever see their own orders (`serializeOrderForRider`, adds `collect`).
+  - **Delivery code:** `assignRider` creates `Order.deliveryCode` (4 digits). `serializeOrder` returns it **only to the customer and only while `OUT_FOR_DELIVERY`**; never to admins or riders. `POST /rider/orders/:id/deliver {code}` (5 wrong tries per order per 10 min → 429) then `advanceOrder(…, 'DELIVERED', 'rider:<id>')`. History `by` is `admin:<id>` / `rider:<id>`; orders expose `deliveredBy`. The admin button is "Mark delivered without code" (override).
+  - `POST /rider/orders/:id/fail {reason}` → `DELIVERY_FAILED` with `failReason`.
+  - **Live location:** the app (`src/lib/location-share.ts`, foreground `watchPositionAsync` + keep-awake, only while an order is active and on duty) posts `POST /rider/location` (stored at most every 10 s in `Rider.lastLocation`). Emits `rider:location` to admins and `order:rider-location` to customers with that rider's active orders; `GET /orders/:id` adds `riderLocation` (last 10 min) so the customer map (`src/components/map/TrackMap*`) isn't empty on open. Background (screen-off) tracking is not built.
+  - Socket room `rider:<id>`: `order:assigned`, `order:updated`.
 - Product images live on ImageKit under `/chito/products/<category>/<file>` (uploaded by `apps/api/scripts/upload-seed-images.mjs`). The API returns these paths; clients add `?tr=…`.
 - **Branding is "Sikkim"** (expansion planned). The single store stays "Singtam Bazaar, 737134"; radius copy says "of our store". Multi-store is a future step.
 
-Run locally (`.claude/launch.json` has all three):
+Run locally (`.claude/launch.json` has all four):
 - **API:** `cd apps/api && npm run dev` (port 4000). Also `npm run seed`, `npm run e2e`, `npm run typecheck`.
 - **Admin:** `cd apps/admin && npm run dev` (port 3000). Also `npm run build`, `npm run lint`.
 - **Mobile:** `cd apps/mobile && npx expo start` (Expo Go) or `npm run web`. Also `npx expo lint`, `npx tsc --noEmit`. Always add packages with `npx expo install`.
+- **Rider:** `cd apps/rider && npx expo start` or `npm run web -- --port 8082` (add `http://localhost:8082` to local `CORS_ORIGINS`). Same lint/tsc commands. A rider logs in with a phone saved on the admin Riders page.
 - A real phone reaches the API at `EXPO_PUBLIC_API_URL` = the PC's Wi-Fi IP. Windows Firewall must allow inbound port 4000.
 
 ## Commands (target monorepo, once scaffolded)
@@ -108,7 +116,7 @@ eas build -p android --profile preview   # test APK
 4. **Stock:** decrement atomically on order placement (`findOneAndUpdate` with `stock: { $gte: qty }`, inside a transaction). Restore on cancellation/payment expiry.
 5. **Order status transitions** only via the allowed map in `packages/shared` (see PRD §6):
    `PAYMENT_PENDING → PLACED → CONFIRMED → PACKED → OUT_FOR_DELIVERY → DELIVERED`, plus `CANCELLED` / `DELIVERY_FAILED`. Every change is appended to `statusHistory` and emitted via Socket.io.
-6. **Rider assignment is admin-only.** Assigning sets the order to `OUT_FOR_DELIVERY` and the rider to `ON_DELIVERY`. Delivering sets the rider back to `AVAILABLE` (if no other active orders). COD amount is added to the rider's `codBalance` until settled.
+6. **Rider assignment is admin-only.** Assigning sets the order to `OUT_FOR_DELIVERY` and the rider to `ON_DELIVERY`. Delivering sets the rider back to `AVAILABLE` (if no other active orders). COD amount is added to the rider's `codBalance` until settled. Riders confirm delivery only with the customer's code; they never pick their own orders.
 7. **Online payments:** the order becomes `PLACED` only after a verified Razorpay signature (payment-link callback or `payment_link.paid` webhook) or a server-side status check with Razorpay. Never trust the client. Always verify the webhook signature. `PAYMENT_PENDING` orders expire after ~16 min (Razorpay's minimum link expiry is 15).
 8. **Order creation is idempotent** (`Idempotency-Key` header, unique index).
 9. Customers can cancel only in `PAYMENT_PENDING` / `PLACED` / `CONFIRMED`.
@@ -147,4 +155,4 @@ Never commit `.env` files. Keep `.env.example` files up to date.
 - Singtam is hilly, so road distance is greater than straight-line distance. Addresses rely on **landmarks**, so the landmark field is required.
 - Users speak Nepali, Hindi and English. Copy should be simple and friendly.
 - Monsoon/landslides can close the store. Always handle `store.isOpen === false` gracefully in the UI.
-- Phase plan: Phase 1 = COD MVP, Phase 2 = Razorpay + push + i18n, Phase 3 = rider app with live GPS.
+- Phase plan: Phase 1 = COD MVP, Phase 2 = Razorpay + push + i18n, Phase 3 = rider background GPS + self-assignment (the basic rider app already shipped).

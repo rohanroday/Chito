@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useAdmin } from '@/components/Shell';
 import { api } from '@/lib/api';
-import { minutesSince, rupees } from '@/lib/format';
+import { duration, minutesSince, rupees } from '@/lib/format';
 import { useLiveEvent } from '@/lib/live';
 import { useNow } from '@/lib/use-now';
 import type { Rider } from '@/lib/types';
@@ -30,6 +30,10 @@ export default function RidersPage() {
   useEffect(load, [load]);
   useLiveEvent('rider:updated', load);
   useLiveEvent('order:updated', load);
+  // Live position from the rider app (no reload needed)
+  useLiveEvent<{ id: string; lat: number; lng: number; at: string }>('rider:location', (p) =>
+    setRiders((rs) => rs?.map((r) => (r.id === p.id ? { ...r, lastLocation: { lat: p.lat, lng: p.lng, at: p.at } } : r)) ?? null),
+  );
 
   async function act(fn: () => Promise<unknown>) {
     setError('');
@@ -46,7 +50,15 @@ export default function RidersPage() {
     if (confirm(`Did ${r.name} hand over ${rupees(r.codBalance)} cash?`)) act(() => api(`/admin/riders/${r.id}/settle-cod`, { method: 'POST' }));
   };
   const remove = (r: Rider) => {
-    if (confirm(`Remove ${r.name} from the rider list?`)) act(() => api(`/admin/riders/${r.id}`, { method: 'PATCH', body: { isActive: false } }));
+    if (!confirm(`Remove ${r.name} from the rider list? They will also be logged out of the Chito Rider app.`)) return;
+    act(async () => {
+      await api(`/admin/riders/${r.id}`, { method: 'PATCH', body: { isActive: false } });
+      await api(`/admin/riders/${r.id}/logout-everywhere`, { method: 'POST' });
+    });
+  };
+  const logoutApp = (r: Rider) => {
+    if (confirm(`Log ${r.name} out of the Chito Rider app? (Lost phone, or someone else used their number.) They can log in again with an OTP.`))
+      act(() => api(`/admin/riders/${r.id}/logout-everywhere`, { method: 'POST' }));
   };
 
   async function add(e: React.FormEvent) {
@@ -65,7 +77,7 @@ export default function RidersPage() {
         <div>
           <h1 className="font-display text-3xl text-maroon">Riders</h1>
           <p className="text-sm text-muted">
-            Mark riders “at the store” when they arrive. Cash still with riders: <b>{rupees(totalCash)}</b>
+            Riders use the <b>Chito Rider</b> app with the mobile number saved here (OTP login). Cash still with riders: <b>{rupees(totalCash)}</b>
           </p>
         </div>
         {admin?.role === 'OWNER' && (
@@ -121,9 +133,19 @@ export default function RidersPage() {
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-sm font-bold ${STATUS_STYLE[r.status]}`}>{STATUS_TEXT[r.status]}</span>
                   <div className="mt-1 text-xs text-muted">
-                    {r.status === 'AVAILABLE' && r.availableSince && `waiting ${minutesSince(r.availableSince, now)} min`}
+                    {r.status === 'AVAILABLE' && r.availableSince && `waiting ${duration(minutesSince(r.availableSince, now))}`}
                     {r.status === 'ON_DELIVERY' && `${r.activeOrders ?? 0} order(s) out`}
                   </div>
+                  {r.lastLocation && (
+                    <div className="mt-1 text-xs">
+                      <span className={minutesSince(r.lastLocation.at, now) <= 2 ? 'font-semibold text-leaf' : 'text-muted'}>
+                        📍 seen {minutesSince(r.lastLocation.at, now) < 1 ? 'just now' : `${duration(minutesSince(r.lastLocation.at, now))} ago`}
+                      </span>{' '}
+                      <a href={`https://www.google.com/maps?q=${r.lastLocation.lat},${r.lastLocation.lng}`} target="_blank" rel="noreferrer" className="font-semibold text-turquoise">
+                        Map ↗
+                      </a>
+                    </div>
+                  )}
                 </td>
                 <td className="px-4 py-3 font-bold">{rupees(r.codBalance)}</td>
                 <td className="space-x-2 px-4 py-3 text-right">
@@ -140,6 +162,11 @@ export default function RidersPage() {
                   {r.codBalance > 0 && (
                     <button onClick={() => settle(r)} className="h-9 rounded-lg bg-gold px-3 text-sm font-bold text-maroon">
                       Settle cash
+                    </button>
+                  )}
+                  {admin?.role === 'OWNER' && (
+                    <button onClick={() => logoutApp(r)} className="h-9 px-2 text-sm font-semibold text-muted hover:underline">
+                      Log out of app
                     </button>
                   )}
                   {admin?.role === 'OWNER' && r.status !== 'ON_DELIVERY' && (

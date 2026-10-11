@@ -211,7 +211,7 @@ admin.get('/orders', async (req, res) => {
 
 admin.patch('/orders/:id/status', async (req, res) => {
   const { status } = parse(z.object({ status: z.enum(['CONFIRMED', 'PACKED', 'DELIVERED', 'DELIVERY_FAILED']) }), req.body);
-  res.json(serializeOrder(await advanceOrder(String(req.params.id), status, userId(req)), true));
+  res.json(serializeOrder(await advanceOrder(String(req.params.id), status, `admin:${userId(req)}`), true));
 });
 
 admin.post('/orders/:id/assign-rider', async (req, res) => {
@@ -234,6 +234,8 @@ const serializeRider = (r: InstanceType<typeof Rider>) => ({
   availableSince: r.availableSince,
   codBalance: r.codBalance,
   isActive: r.isActive,
+  // Last GPS fix from the rider app (null until they've delivered with it)
+  lastLocation: r.lastLocation?.at ? { lat: r.lastLocation.lat, lng: r.lastLocation.lng, at: r.lastLocation.at } : null,
 });
 
 admin.get('/riders', async (_req, res) => {
@@ -272,6 +274,13 @@ admin.patch('/riders/:id', async (req, res) => {
   await r.save();
   emitToAdmins('rider:updated', serializeRider(r));
   res.json(serializeRider(r));
+});
+
+/** A rider leaves / loses their phone: end their rider-app sessions (they can log in again only while active). */
+admin.post('/riders/:id/logout-everywhere', requireOwner, async (req, res) => {
+  const r = await Rider.findByIdAndUpdate(req.params.id, { $inc: { tokenVersion: 1 } }, { returnDocument: 'after' });
+  if (!r) throw notFound('Rider');
+  res.json({ ok: true });
 });
 
 admin.post('/riders/:id/settle-cod', async (req, res) => {

@@ -4,7 +4,7 @@ import { Bell, Bike, CheckCircle2, Clock, Inbox, type LucideIcon, MapPin, Packag
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '@/lib/api';
-import { chime, clock, imageUrl, minutesSince, rupees } from '@/lib/format';
+import { chime, clock, duration, imageUrl, minutesSince, rupees } from '@/lib/format';
 import { useLiveEvent } from '@/lib/live';
 import { useNow } from '@/lib/use-now';
 import { type Order, type OrderStatus, type Rider, STATUS_LABEL } from '@/lib/types';
@@ -82,7 +82,11 @@ function OrderCard({ o, now, fresh, onOpen }: { o: Order; now: number; fresh: bo
           <Bike size={12} /> {o.rider.name}
         </div>
       )}
-      {o.status === 'DELIVERY_FAILED' && <div className="mt-1.5 text-xs font-semibold text-vermilion">Delivery failed · re-assign or cancel</div>}
+      {o.status === 'DELIVERY_FAILED' && (
+        <div className="mt-1.5 text-xs font-semibold text-vermilion">
+          Delivery failed{o.failReason ? `: ${o.failReason}` : ''} · re-assign or cancel
+        </div>
+      )}
     </button>
   );
 }
@@ -131,7 +135,7 @@ function AssignRider({ order, onDone, onClose }: { order: Order; onDone: (o: Ord
           <div className="text-xs font-bold uppercase tracking-wide text-leaf">At the store ({available.length})</div>
           {riders === null && <p className="text-sm text-muted">Loading riders…</p>}
           {riders && available.length === 0 && <p className="text-sm text-muted">No rider is waiting. Mark a rider available on the Riders page.</p>}
-          {available.map((r) => row(r, `Waiting ${r.availableSince ? minutesSince(r.availableSince, now) : 0} min · ${r.vehicle.toLowerCase().replace('_', ' ')}`))}
+          {available.map((r) => row(r, `Waiting ${duration(r.availableSince ? minutesSince(r.availableSince, now) : 0)} · ${r.vehicle.toLowerCase().replace('_', ' ')}`))}
           {busy.length > 0 && <div className="pt-2 text-xs font-bold uppercase tracking-wide text-muted">Out on delivery (can carry one more)</div>}
           {busy.map((r) => row(r, `${r.activeOrders ?? 0} order(s) on the way`))}
         </div>
@@ -180,7 +184,13 @@ function OrderDrawer({ o, onClose, onChange }: { o: Order; onClose: () => void; 
             </button>
           </div>
           <div className="text-sm opacity-90">
-            {STATUS_LABEL[o.status]} · placed {clock(o.createdAt)} · {o.paymentMethod === 'COD' ? `collect ${rupees(o.bill.grandTotal)} cash` : PAY_BADGE[payKey(o)].long}
+            {STATUS_LABEL[o.status]} · placed {clock(o.createdAt)} · {o.paymentMethod === 'COD'
+              ? o.status === 'DELIVERED'
+                ? `${rupees(o.bill.grandTotal)} cash collected`
+                : o.status === 'CANCELLED'
+                  ? 'cash on delivery'
+                  : `collect ${rupees(o.bill.grandTotal)} cash`
+              : PAY_BADGE[payKey(o)].long}
           </div>
         </div>
         <div className="dentil" />
@@ -268,6 +278,16 @@ function OrderDrawer({ o, onClose, onChange }: { o: Order; onClose: () => void; 
           )}
 
           {o.cancelReason && <p className="rounded-lg bg-vermilion-50 p-3 text-sm text-vermilion">Cancelled: {o.cancelReason}</p>}
+          {o.status === 'DELIVERY_FAILED' && o.failReason && (
+            <p className="rounded-lg bg-vermilion-50 p-3 text-sm text-vermilion">Rider couldn’t deliver: {o.failReason}</p>
+          )}
+          {o.status === 'DELIVERED' && o.deliveredBy && (
+            <p className={`rounded-lg p-3 text-sm ${o.deliveredBy === 'rider' ? 'bg-leaf-50 text-leaf' : 'bg-gold-50 text-wood'}`}>
+              {o.deliveredBy === 'rider'
+                ? '✓ Delivered by the rider with the customer’s code'
+                : 'Marked delivered from the dashboard (no delivery code)'}
+            </p>
+          )}
           {error && <p className="rounded-lg bg-vermilion-50 p-3 text-sm font-semibold text-vermilion">{error}</p>}
 
           {/* Actions follow the server's allowed transitions */}
@@ -289,8 +309,12 @@ function OrderDrawer({ o, onClose, onChange }: { o: Order; onClose: () => void; 
             )}
             {o.status === 'OUT_FOR_DELIVERY' && (
               <>
-                <button disabled={busy} onClick={() => setStatus('DELIVERED')} className={`${btn} bg-leaf text-white`}>
-                  Delivered ✓
+                {/* Normally the rider marks it delivered with the customer's code; this is the fallback */}
+                <button
+                  disabled={busy}
+                  onClick={() => confirm('Mark delivered without the customer’s code? Use this only if the rider can’t use the app.') && setStatus('DELIVERED')}
+                  className={`${btn} border-[1.5px] border-leaf text-leaf`}>
+                  Mark delivered without code
                 </button>
                 <button disabled={busy} onClick={() => setStatus('DELIVERY_FAILED')} className={`${btn} border-[1.5px] border-vermilion text-vermilion`}>
                   Delivery failed

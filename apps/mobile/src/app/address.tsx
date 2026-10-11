@@ -9,6 +9,7 @@ import { errorMessage } from '@/api/client';
 import { Button } from '@/components/Button';
 import { DentilBorder } from '@/components/ornaments';
 import { Txt } from '@/components/Txt';
+import { distance } from '@/lib/format';
 import { getCurrentPlace } from '@/lib/location';
 import { openMapPicker } from '@/lib/map-pick';
 import { type CheckedPin, checkPin, resolveSharedLocation } from '@/lib/pin';
@@ -336,14 +337,14 @@ export default function AddressScreen() {
             <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', backgroundColor: colors.leaf50, borderRadius: radius.md, padding: 12 }}>
               <CircleCheck size={20} color={colors.leaf} />
               <Txt variant="strong" color={colors.leaf} style={{ flex: 1 }}>
-                Pin set · {loc.distanceKm} km from our store · We deliver here!
+                Pin set · {distance(loc.distanceKm)} from our store · We deliver here!
               </Txt>
             </View>
           ) : (
             <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: colors.vermilion50, borderRadius: radius.md, padding: 12 }}>
               <CircleAlert size={20} color={colors.vermilion} />
               <Txt variant="strong" color={colors.vermilion} style={{ flex: 1 }}>
-                This pin is {loc.distanceKm} km from our store. Chito delivers only within {store.serviceRadiusKm} km for now.
+                This pin is {distance(loc.distanceKm)} from our store. Chito delivers only within {store.serviceRadiusKm} km for now.
               </Txt>
             </View>
           ))}

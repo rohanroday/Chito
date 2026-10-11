@@ -13,7 +13,7 @@ import { StoreClosedStrip } from '@/components/StoreClosedStrip';
 import { Txt } from '@/components/Txt';
 import { ApiError, api, errorMessage } from '@/api/client';
 import type { Order } from '@/api/types';
-import { rupees } from '@/lib/format';
+import { rupees, distance } from '@/lib/format';
 import { paymentReturnUrl } from '@/lib/payment';
 import { computeBill, deliveryLine, formatHour } from '@/lib/store-config';
 import { addressLine, hasTypedAddress, isForSomeoneElse, useProfile, useSelectedAddress } from '@/state/auth';
@@ -241,7 +241,7 @@ export default function Jhola() {
               <>
                 <Txt variant="strong">Delivering to {address.label}</Txt>
                 <Txt variant="caption" color={deliverable ? colors.muted : colors.vermilion}>
-                  {address.landmark} · {address.distanceKm} km from store
+                  {address.landmark} · {distance(address.distanceKm)} from store
                   {!deliverable ? ` · outside our ${store.serviceRadiusKm} km area` : ''}
                 </Txt>
               </>

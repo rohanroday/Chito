@@ -66,9 +66,17 @@ export type Order = {
     /** Empty when the customer receives it themself. */
     recipientName: string;
     recipientPhone: string;
+    /** Delivery pin (null for very old orders). */
+    location: { lat: number; lng: number } | null;
   };
   /** Razorpay page to pay on, only while the order is PAYMENT_PENDING. */
   payment: { url: string; expiresAt: string } | null;
+  /** 4 digits to give the rider; only present while OUT_FOR_DELIVERY. */
+  deliveryCode?: string;
+  /** Where the rider was last seen (single-order fetch, only while OUT_FOR_DELIVERY). */
+  riderLocation?: { lat: number; lng: number; at: string } | null;
+  /** Why the rider couldn't deliver. */
+  failReason?: string;
   cancelReason: string;
   createdAt: string;
 };

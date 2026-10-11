@@ -67,6 +67,19 @@ What you end up with:
 
 The APK talks to the Render server, so it works anywhere with internet, not just on your Wi-Fi.
 
+## Step 4b: Build the rider app (Chito Rider)
+Riders use a separate app. Build it the same way:
+```bash
+cd "D:\My Projects\CHITO\apps\rider"
+npm install
+eas init
+eas build -p android --profile preview
+```
+- `eas init` creates a second Expo project ("chito-rider"). Say yes.
+- Install the APK on each rider's phone. Allow **location** when asked: the store and the customer see the rider coming while a delivery is open.
+- A rider logs in with **their phone number + OTP**. First add the rider (with that exact number) on the admin **Riders** page; other numbers are refused.
+- While the demo runs with `OTP_DEV_MODE=true`, the OTP is `1234`.
+
 ## Step 5: Run the admin against the online API
 In `apps/admin/.env.local`, change these two lines:
 ```
@@ -85,6 +98,7 @@ Then `cd apps/admin && npm run dev` and open http://localhost:3000. You log in w
 ## Updating the demo
 - **Server change:** `git commit` + `git push`. Render redeploys automatically.
 - **App change:** run `eas build -p android --profile preview` again and share the new link. Uninstall the old app first if Android complains.
+- **Rider app change:** same command inside `apps/rider`.
 
 ---
 
