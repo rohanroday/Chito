@@ -29,8 +29,9 @@ services:
       # Add every new website address HERE (comma-separated, no trailing slash); the dashboard value is reset on each push.
       #   chito-blush.vercel.app  = admin dashboard
       #   chito-mobile.vercel.app = web version of the customer app
+      #   chito-rider.vercel.app  = web version of the rider app
       - key: CORS_ORIGINS
-        value: http://localhost:3000,http://localhost:8081,https://chito-blush.vercel.app,https://chito-mobile.vercel.app
+        value: http://localhost:3000,http://localhost:8081,http://localhost:8082,https://chito-blush.vercel.app,https://chito-mobile.vercel.app,https://chito-rider.vercel.app
       - key: TZ
         value: Asia/Kolkata
       # Secrets: paste the same values as in apps/api/.env when Render asks
