@@ -1,5 +1,6 @@
-// Razorpay Payment Links: the customer pays on Razorpay's own page (UPI, cards, net banking),
-// so the app needs no native payment SDK. The server is the only place that decides "paid".
+// Razorpay, two ways to pay; the server is the only place that decides "paid":
+// - Orders + the native Checkout inside the Android app (UPI apps open straight from Chito)
+// - Payment Links: Razorpay's own page, for the web app and as a fallback
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 import { env } from '../config/env.js';
@@ -69,6 +70,21 @@ export async function cancelPaymentLink(id: string) {
   }
 }
 
+// ── Orders (native Checkout in the app) ──
+export type RzpOrder = { id: string; amount: number; currency: string; status: 'created' | 'attempted' | 'paid' };
+export type RzpPayment = { id: string; order_id: string | null; amount: number; status: 'created' | 'authorized' | 'captured' | 'refunded' | 'failed' };
+
+export const createRzpOrder = (o: { orderNumber: string; grandTotal: number }) =>
+  rp<RzpOrder>('POST', '/orders', { amount: o.grandTotal, currency: 'INR', receipt: o.orderNumber, notes: { chitoOrder: o.orderNumber } });
+
+export const getRzpOrderPayments = async (rzpOrderId: string) => (await rp<{ items: RzpPayment[] }>('GET', `/orders/${rzpOrderId}/payments`)).items ?? [];
+
+export const getPayment = (paymentId: string) => rp<RzpPayment>('GET', `/payments/${encodeURIComponent(paymentId)}`);
+
+/** Accounts set to manual capture leave payments "authorized"; take the money so it isn't auto-refunded later. */
+export const capturePayment = (paymentId: string, amount: number) =>
+  rp<RzpPayment>('POST', `/payments/${encodeURIComponent(paymentId)}/capture`, { amount, currency: 'INR' });
+
 export async function refundPayment(paymentId: string, amount: number) {
   return rp<{ id: string; status: string }>('POST', `/payments/${paymentId}/refund`, { amount, speed: 'normal' });
 }
@@ -83,6 +99,13 @@ function safeEqualHex(a: string, b: string) {
 export function verifyCallbackSignature(p: { linkId: string; referenceId: string; status: string; paymentId: string; signature: string }) {
   if (!env.RAZORPAY_KEY_SECRET || !/^[a-f0-9]+$/i.test(p.signature)) return false;
   const expected = createHmac('sha256', env.RAZORPAY_KEY_SECRET).update(`${p.linkId}|${p.referenceId}|${p.status}|${p.paymentId}`).digest('hex');
+  return safeEqualHex(expected, p.signature);
+}
+
+/** Signature the native Checkout returns on success: HMAC_SHA256(order_id|payment_id, key_secret). */
+export function verifyCheckoutSignature(p: { rzpOrderId: string; paymentId: string; signature: string }) {
+  if (!env.RAZORPAY_KEY_SECRET || !/^[a-f0-9]+$/i.test(p.signature)) return false;
+  const expected = createHmac('sha256', env.RAZORPAY_KEY_SECRET).update(`${p.rzpOrderId}|${p.paymentId}`).digest('hex');
   return safeEqualHex(expected, p.signature);
 }
 

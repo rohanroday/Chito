@@ -315,6 +315,54 @@ async function main() {
   check('customer can cancel an unpaid online order', c2.json.status === 'CANCELLED' && c2.json.paymentStatus === 'PENDING', c2.json);
   check('…and its stock is released', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
   }
+
+  console.log('\nIn-app Razorpay Checkout (native SDK)');
+  const on3 = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'ONLINE', payVia: 'checkout' }, ct, { 'Idempotency-Key': key() });
+  if (on3.json.error?.code === 'PAYMENT_PROVIDER_ERROR') {
+    console.log('  • skipped in-app checkout checks: Razorpay unreachable');
+  } else {
+  check('in-app order waits for payment with no payment page', on3.status === 201 && on3.json.status === 'PAYMENT_PENDING' && on3.json.payment?.url === '' && on3.json.payment?.inApp === true, on3.json);
+  const stored3 = (await Order.findById(on3.json.id))!;
+  check('…a Razorpay Order but no Payment Link (can’t be paid twice)', /^order_/.test(stored3.payment?.rzpOrderId ?? '') && !stored3.payment?.linkId, stored3.payment);
+  const co = await call('POST', `/orders/${on3.json.id}/payment/checkout`, {}, ct);
+  check('checkout reuses the order’s Razorpay Order', co.json.rzpOrderId === stored3.payment?.rzpOrderId, co.json);
+  check(
+    'checkout gives the app a Razorpay Order for the exact bill',
+    co.status === 200 && /^order_/.test(co.json.rzpOrderId ?? '') && co.json.amount === on3.json.bill?.grandTotal && co.json.currency === 'INR' && !!co.json.keyId,
+    co.json,
+  );
+  check('…closes before our payment window ends', co.json.timeoutSec > 60 && co.json.timeoutSec <= 16 * 60, co.json.timeoutSec);
+  check('…with the customer pre-filled', co.json.prefill?.contact === TEST_PHONE, co.json.prefill);
+  check('…and never the secret key', !JSON.stringify(co.json).includes(process.env.RAZORPAY_KEY_SECRET!));
+  const co2 = await call('POST', `/orders/${on3.json.id}/payment/checkout`, {}, ct);
+  check('opening checkout again reuses the same Razorpay Order', co2.json.rzpOrderId === co.json.rzpOrderId, co2.json);
+  const verify = (b: Json) => call('POST', `/orders/${on3.json.id}/payment/verify`, b, ct);
+  const forgedV = await verify({ razorpay_order_id: co.json.rzpOrderId, razorpay_payment_id: 'pay_e2eFake', razorpay_signature: 'deadbeef' });
+  check('forged in-app "paid" rejected', forgedV.status === 400 && (await Order.findById(on3.json.id))!.status === 'PAYMENT_PENDING', forgedV.json);
+  const sign = (orderId: string, payId: string) => createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!).update(`${orderId}|${payId}`).digest('hex');
+  const otherOrder = await verify({ razorpay_order_id: 'order_SomeoneElse', razorpay_payment_id: 'pay_e2eFake', razorpay_signature: sign('order_SomeoneElse', 'pay_e2eFake') });
+  check('a valid signature for a different Razorpay Order is rejected', otherOrder.status === 400, otherOrder.json);
+  const noSuchPay = await verify({ razorpay_order_id: co.json.rzpOrderId, razorpay_payment_id: 'pay_e2eFake', razorpay_signature: sign(co.json.rzpOrderId, 'pay_e2eFake') });
+  check('signed but Razorpay has no such payment → not placed', noSuchPay.status >= 400 && (await Order.findById(on3.json.id))!.status === 'PAYMENT_PENDING', noSuchPay.json);
+  check('bad verify body rejected', (await verify({ razorpay_order_id: co.json.rzpOrderId })).status === 400);
+  const refreshed3 = await call('POST', `/orders/${on3.json.id}/payment/refresh`, {}, ct);
+  check('status check looks at the Razorpay Order too (still unpaid)', refreshed3.json.status === 'PAYMENT_PENDING', refreshed3.json);
+  const unsignedHook = await fetch(`${API}/webhooks/razorpay`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ event: 'order.paid', payload: { order: { entity: { id: co.json.rzpOrderId } }, payment: { entity: { id: 'pay_e2eFake' } } } }),
+  });
+  check('unsigned order.paid webhook rejected', unsignedHook.status === 400 && (await Order.findById(on3.json.id))!.status === 'PAYMENT_PENDING');
+  const codOrder = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'COD' }, ct, { 'Idempotency-Key': key() });
+  check('no checkout for a Cash on Delivery order', (await call('POST', `/orders/${codOrder.json.id}/payment/checkout`, {}, ct)).status === 409);
+  await call('POST', `/orders/${codOrder.json.id}/cancel`, {}, ct);
+  // Pretend the 16-minute window passed without payment
+  await Order.updateOne({ _id: on3.json.id }, { $set: { 'payment.expiresAt': new Date(Date.now() - 5 * 60_000) } });
+  const expired3 = await call('POST', `/orders/${on3.json.id}/payment/refresh`, {}, ct);
+  check('unpaid in-app order expires → cancelled', expired3.json.status === 'CANCELLED' && expired3.json.paymentStatus === 'PENDING', expired3.json);
+  check('no checkout once the order is cancelled', (await call('POST', `/orders/${on3.json.id}/payment/checkout`, {}, ct)).status === 409);
+  check('stock back after the checkout tests', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
+  }
   const badPhone = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: { ...momAddress, recipientPhone: '12345' }, paymentMethod: 'COD' }, ct, { 'Idempotency-Key': key() });
   check('invalid recipient phone rejected', badPhone.status === 400, badPhone.json);
 

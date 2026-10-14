@@ -69,8 +69,8 @@ export type Order = {
     /** Delivery pin (null for very old orders). */
     location: { lat: number; lng: number } | null;
   };
-  /** Razorpay page to pay on, only while the order is PAYMENT_PENDING. */
-  payment: { url: string; expiresAt: string } | null;
+  /** Only while PAYMENT_PENDING. url = Razorpay's page ('' when the order is paid in the app's Checkout). */
+  payment: { url: string; inApp?: boolean; expiresAt: string } | null;
   /** 4 digits to give the rider; only present while OUT_FOR_DELIVERY. */
   deliveryCode?: string;
   /** Where the rider was last seen (single-order fetch, only while OUT_FOR_DELIVERY). */

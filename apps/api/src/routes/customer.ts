@@ -9,7 +9,16 @@ import { badRequest, HttpError, notFound, parse, unauthorized } from '../lib/htt
 import { checkOtp, phoneSchema } from '../lib/otp.js';
 import { Admin, Category, Order, Otp, Product, Rider, User } from '../models/index.js';
 import { resolveSharedLocation } from '../lib/maplink.js';
-import { cancelOrder, createOrder, markOrderPaid, refreshOnlinePayment, serializeOrder } from '../services/orders.js';
+import {
+  cancelOrder,
+  createOrder,
+  markOrderPaid,
+  markRzpOrderPaid,
+  refreshOnlinePayment,
+  serializeOrder,
+  startCheckout,
+  verifyCheckout,
+} from '../services/orders.js';
 import { verifyCallbackSignature, verifyWebhookSignature } from '../services/razorpay.js';
 import { checkServiceability, getStore, publicStore } from '../services/store.js';
 
@@ -200,6 +209,8 @@ const orderBody = z.object({
     location: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).optional(),
   }),
   paymentMethod: z.enum(['COD', 'ONLINE']),
+  // ONLINE only: "checkout" = Razorpay's native Checkout in the Android app; "link" = Razorpay's page (web, older apps)
+  payVia: z.enum(['checkout', 'link']).default('link'),
   instructions: z.string().max(300).optional(),
 });
 
@@ -232,6 +243,29 @@ customer.post('/orders/:id/payment/refresh', requireCustomer, async (req, res) =
   const o = await Order.findOne({ _id: req.params.id, userId: userId(req) }).catch(() => null);
   if (!o) throw notFound('Order');
   res.json(serializeOrder(await refreshOnlinePayment(o)));
+});
+
+/** Native Razorpay Checkout inside the app: the options it opens with (a Razorpay Order for this order). */
+customer.post('/orders/:id/payment/checkout', requireCustomer, async (req, res) => {
+  res.json(await startCheckout(String(req.params.id), userId(req)));
+});
+
+/** The Checkout said "paid": the server checks the signature and Razorpay's record before placing the order. */
+customer.post('/orders/:id/payment/verify', requireCustomer, async (req, res) => {
+  const body = parse(
+    z.object({
+      razorpay_order_id: z.string().trim().min(1).max(60),
+      razorpay_payment_id: z.string().trim().min(1).max(60),
+      razorpay_signature: z.string().trim().min(1).max(200),
+    }),
+    req.body,
+  );
+  const o = await verifyCheckout(String(req.params.id), userId(req), {
+    rzpOrderId: body.razorpay_order_id,
+    paymentId: body.razorpay_payment_id,
+    signature: body.razorpay_signature,
+  });
+  res.json(serializeOrder(o));
 });
 
 customer.post('/orders/:id/cancel', requireCustomer, async (req, res) => {
@@ -291,11 +325,20 @@ customer.post('/webhooks/razorpay', async (req, res) => {
   }
   const evt = JSON.parse(raw.toString('utf8')) as {
     event: string;
-    payload?: { payment_link?: { entity?: { id?: string } }; payment?: { entity?: { id?: string } } };
+    payload?: {
+      payment_link?: { entity?: { id?: string } };
+      order?: { entity?: { id?: string } };
+      payment?: { entity?: { id?: string; order_id?: string | null } };
+    };
   };
+  const paymentId = evt.payload?.payment?.entity?.id ?? '';
   if (evt.event === 'payment_link.paid') {
     const linkId = evt.payload?.payment_link?.entity?.id;
-    if (linkId) await markOrderPaid(linkId, evt.payload?.payment?.entity?.id ?? '');
+    if (linkId) await markOrderPaid(linkId, paymentId);
+  } else if (evt.event === 'order.paid' || evt.event === 'payment.captured') {
+    // Paid in the app's native Checkout. (A Payment Link's own internal order matches no stored rzpOrderId.)
+    const rzpOrderId = evt.payload?.order?.entity?.id ?? evt.payload?.payment?.entity?.order_id;
+    if (rzpOrderId && paymentId) await markRzpOrderPaid(rzpOrderId, paymentId);
   }
   res.json({ ok: true });
 });

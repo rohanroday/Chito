@@ -72,13 +72,14 @@ export default function OrderTracking() {
       .then(async (o) => {
         if (!alive) return;
         receive(o);
-        // Straight from the Jhola: open Razorpay once (the phone's browser closes itself after paying)
+        // Straight from the Jhola: open Razorpay once (in-app Checkout, or the phone's browser that closes itself)
         if (payNow === '1' && o.status === 'PAYMENT_PENDING' && Platform.OS !== 'web' && !autoPaid.current) {
           autoPaid.current = true;
           setPaying(true);
           const after = await openPayment(o);
           if (alive) {
-            receive(after);
+            receive(after.order);
+            setError(after.message ?? '');
             setPaying(false);
           }
         }
@@ -185,7 +186,9 @@ export default function OrderTracking() {
     setPaying(true);
     setError('');
     try {
-      receive(await openPayment(order));
+      const after = await openPayment(order);
+      receive(after.order);
+      if (after.message) setError(after.message);
     } finally {
       setPaying(false);
     }
@@ -254,7 +257,7 @@ export default function OrderTracking() {
               </Txt>
             </View>
             <Txt variant="caption" color={colors.wood}>
-              UPI, cards or net banking on Razorpay&apos;s secure page. Your items are kept aside until{' '}
+              UPI apps, cards or net banking with Razorpay&apos;s secure checkout. Your items are kept aside until{' '}
               {new Date(order.payment.expiresAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' })}.
             </Txt>
             <Button title={`Pay ${rupees(order.bill.grandTotal)} now`} variant="gold" onPress={pay} loading={paying} />

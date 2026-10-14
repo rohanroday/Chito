@@ -1,12 +1,25 @@
 import mongoose, { type Types } from 'mongoose';
 import { randomInt } from 'node:crypto';
 
+import { env } from '../config/env.js';
 import { fromPoint, type LatLng, toPoint } from '../lib/geo.js';
 import { badRequest, conflict, HttpError, notFound, unauthorized } from '../lib/http.js';
 import { ACTIVE_STATUSES, canTransition, CUSTOMER_CANCELLABLE, type OrderStatus } from '../lib/order-status.js';
 import { emitToAdmins, emitToRider, emitToUser } from '../lib/realtime.js';
 import { Category, Counter, Order, type OrderInstance, Product, Rider, User } from '../models/index.js';
-import { cancelPaymentLink, createPaymentLink, getPaymentLink, refundPayment } from './razorpay.js';
+import {
+  cancelPaymentLink,
+  capturePayment,
+  createPaymentLink,
+  createRzpOrder,
+  getPayment,
+  getPaymentLink,
+  getRzpOrderPayments,
+  PAYMENT_WINDOW_MIN,
+  refundPayment,
+  type RzpPayment,
+  verifyCheckoutSignature,
+} from './razorpay.js';
 import { checkServiceability, computeBill, etaFor, getStore, isOpenNow } from './store.js';
 
 type OrderHydrated = OrderInstance;
@@ -24,6 +37,8 @@ export type CreateOrderInput = {
     location?: LatLng;
   };
   paymentMethod: 'COD' | 'ONLINE';
+  /** ONLINE: pay in the app's native Razorpay Checkout, or on a Razorpay Payment Link page (default). */
+  payVia?: 'checkout' | 'link';
   instructions?: string;
   /** App link to return to after paying, with ORDER_ID as a placeholder (checked by the route). */
   returnUrl?: string;
@@ -60,8 +75,11 @@ export function serializeOrder(o: OrderHydrated, forAdmin = false) {
     deliveredBy: deliveredBy(o),
     // The code proves delivery, so ONLY the customer sees it, and only while the rider is on the way
     ...(!forAdmin && o.status === 'OUT_FOR_DELIVERY' && o.deliveryCode && { deliveryCode: o.deliveryCode }),
-    // Where to pay, while an online order is waiting for payment
-    payment: o.status === 'PAYMENT_PENDING' && o.payment?.linkUrl ? { url: o.payment.linkUrl, expiresAt: o.payment.expiresAt } : null,
+    // Where to pay, while an online order is waiting for payment. url = Razorpay's page ('' = pay in the app's Checkout)
+    payment:
+      o.status === 'PAYMENT_PENDING' && (o.payment?.linkUrl || o.payment?.rzpOrderId)
+        ? { url: o.payment.linkUrl ?? '', inApp: !!o.payment.rzpOrderId, expiresAt: o.payment.expiresAt }
+        : null,
     createdAt: (o as unknown as { createdAt: Date }).createdAt,
     ...(forAdmin && { customer: o.customer, riderId: o.riderId?.toString() ?? null }),
   };
@@ -203,15 +221,22 @@ async function placeOrder(
       broadcast(order, 'order:new');
       return order;
     }
-    // Online: create the Razorpay payment page. The store only hears about the order once it's paid.
+    // Online: the store only hears about the order once it's paid.
     try {
+      if (input.payVia === 'checkout') {
+        // In-app Checkout: only a Razorpay Order, no payment page, so the order can't be paid in two places
+        const rzp = await createRzpOrder({ orderNumber: order.orderNumber, grandTotal: order.bill?.grandTotal ?? 0 });
+        order.payment = { linkId: '', linkUrl: '', rzpOrderId: rzp.id, paymentId: '', expiresAt: new Date(Date.now() + PAYMENT_WINDOW_MIN * 60_000), returnUrl: '' };
+        await order.save();
+        return order;
+      }
       const link = await createPaymentLink({
         orderNumber: order.orderNumber,
         grandTotal: order.bill?.grandTotal ?? 0,
         customerName: user.name,
         customerPhone: user.phone,
       });
-      order.payment = { linkId: link.id, linkUrl: link.short_url, paymentId: '', expiresAt: new Date(link.expire_by * 1000), returnUrl: input.returnUrl ?? '' };
+      order.payment = { linkId: link.id, linkUrl: link.short_url, rzpOrderId: '', paymentId: '', expiresAt: new Date(link.expire_by * 1000), returnUrl: input.returnUrl ?? '' };
       await order.save();
       return order;
     } catch (e) {
@@ -271,10 +296,13 @@ async function settleOnlinePaymentOnCancel(o: OrderHydrated) {
   }
 }
 
-/** Called once Razorpay confirms payment (callback, status check or webhook). Safe to call more than once. */
-export async function markOrderPaid(linkId: string, paymentId: string) {
+/**
+ * Razorpay confirmed a payment (link callback, in-app checkout, status check or webhook). Safe to call more than once.
+ * `match` finds the order by the Razorpay object that was paid: the Payment Link or the Razorpay Order.
+ */
+async function confirmPayment(match: { 'payment.linkId': string } | { 'payment.rzpOrderId': string }, paymentId: string) {
   const o = await Order.findOneAndUpdate(
-    { 'payment.linkId': linkId, status: 'PAYMENT_PENDING' },
+    { ...match, status: 'PAYMENT_PENDING' },
     {
       $set: { status: 'PLACED', paymentStatus: 'PAID', 'payment.paymentId': paymentId },
       $push: { statusHistory: { status: 'PLACED', at: new Date(), by: 'payment' } },
@@ -283,21 +311,92 @@ export async function markOrderPaid(linkId: string, paymentId: string) {
   );
   if (o) {
     broadcast(o, 'order:new'); // now the store hears about it
+    // Paid in the app: close the Razorpay page so the same order can't be paid twice
+    if ('payment.rzpOrderId' in match && o.payment?.linkId) await cancelPaymentLink(o.payment.linkId);
     return o;
   }
-  // Paid after we already gave up on it (expired/cancelled): refund automatically
-  const late = await Order.findOne({ 'payment.linkId': linkId });
-  if (late && late.status === 'CANCELLED' && late.paymentStatus === 'PENDING' && paymentId) {
-    late.payment!.paymentId = paymentId;
-    late.paymentStatus = 'PAID';
-    await settleOnlinePaymentOnCancel(late);
+  const other = await Order.findOne(match);
+  if (!other || !paymentId) return other;
+  if (other.status === 'CANCELLED' && other.paymentStatus === 'PENDING') {
+    // Paid after we already gave up on it (expired/cancelled): refund automatically
+    other.payment!.paymentId = paymentId;
+    other.paymentStatus = 'PAID';
+    await settleOnlinePaymentOnCancel(other);
+  } else if (other.paymentStatus !== 'PENDING' && other.payment?.paymentId && other.payment.paymentId !== paymentId) {
+    // Paid a second time (e.g. on the link AND in the app): give the extra payment back
+    await refundPayment(paymentId, other.bill?.grandTotal ?? 0).catch((e) => console.error('duplicate payment refund failed', other.orderNumber, paymentId, e));
   }
-  return late;
+  return other;
+}
+
+export const markOrderPaid = (linkId: string, paymentId: string) => confirmPayment({ 'payment.linkId': linkId }, paymentId);
+export const markRzpOrderPaid = (rzpOrderId: string, paymentId: string) => confirmPayment({ 'payment.rzpOrderId': rzpOrderId }, paymentId);
+
+/** A payment on our Razorpay Order that should count: captured, or authorized (then capture it). */
+async function settledPayment(o: OrderHydrated, p: RzpPayment) {
+  if (p.order_id !== o.payment?.rzpOrderId || p.amount !== (o.bill?.grandTotal ?? 0)) return null;
+  if (p.status === 'captured') return p;
+  if (p.status === 'authorized') return capturePayment(p.id, p.amount).then((c) => (c.status === 'captured' ? c : null));
+  return null;
+}
+
+/** The app is about to open Razorpay's native Checkout: make (once) the Razorpay Order it pays. */
+export async function startCheckout(orderId: string, userId: string) {
+  let o = await Order.findOne({ _id: orderId, userId }).catch(() => null);
+  if (!o) throw notFound('Order');
+  if (o.paymentMethod !== 'ONLINE') throw conflict('NOT_ONLINE', 'This order is Cash on Delivery.');
+  // Already paid or expired on Razorpay's side? Settle that first.
+  if (o.status === 'PAYMENT_PENDING') o = await refreshOnlinePayment(o);
+  if (o.status !== 'PAYMENT_PENDING') throw conflict('NOT_AWAITING_PAYMENT', o.paymentStatus === 'PAID' ? 'This order is already paid.' : 'This order can no longer be paid. Please place it again.');
+  const secondsLeft = Math.floor(((o.payment?.expiresAt?.getTime() ?? 0) - Date.now()) / 1000);
+  if (secondsLeft < 60) throw conflict('PAYMENT_EXPIRED', 'The time to pay for this order is over. Please place it again.');
+  if (!o.payment?.rzpOrderId) {
+    const rzp = await createRzpOrder({ orderNumber: o.orderNumber, grandTotal: o.bill?.grandTotal ?? 0 });
+    // Conditional: two taps at once reuse the first Razorpay Order instead of making two
+    const saved = await Order.findOneAndUpdate({ _id: o._id, 'payment.rzpOrderId': '' }, { $set: { 'payment.rzpOrderId': rzp.id } }, { returnDocument: 'after' });
+    o = saved ?? (await Order.findById(o._id))!;
+  }
+  const user = await User.findById(o.userId, { name: 1, phone: 1 }).lean();
+  return {
+    keyId: env.RAZORPAY_KEY_ID ?? '',
+    rzpOrderId: o.payment!.rzpOrderId,
+    amount: o.bill?.grandTotal ?? 0, // paise
+    currency: 'INR',
+    description: `Chito order ${o.orderNumber}`,
+    prefill: { name: user?.name ?? '', contact: user?.phone ?? '' },
+    // Razorpay closes the Checkout when our payment window ends, so nobody pays for an order we're about to drop
+    timeoutSec: secondsLeft,
+  };
+}
+
+/** The native Checkout reported success. Trust only the signature + Razorpay's own record of the payment. */
+export async function verifyCheckout(orderId: string, userId: string, r: { rzpOrderId: string; paymentId: string; signature: string }) {
+  const o = await Order.findOne({ _id: orderId, userId }).catch(() => null);
+  if (!o) throw notFound('Order');
+  if (!o.payment?.rzpOrderId || r.rzpOrderId !== o.payment.rzpOrderId || !verifyCheckoutSignature(r)) {
+    throw badRequest('BAD_PAYMENT_SIGNATURE', 'We could not confirm this payment. If money was taken, it will be confirmed automatically or refunded.');
+  }
+  const p = await settledPayment(o, await getPayment(r.paymentId));
+  if (!p) throw conflict('PAYMENT_NOT_COMPLETE', 'The payment is not complete yet. Please check again in a moment.');
+  return (await markRzpOrderPaid(o.payment.rzpOrderId, p.id)) ?? o;
 }
 
 /** Ask Razorpay where an unpaid order stands: mark it paid, or cancel it when the link has expired. */
 export async function refreshOnlinePayment(o: OrderHydrated) {
-  if (o.status !== 'PAYMENT_PENDING' || !o.payment?.linkId) return o;
+  if (o.status !== 'PAYMENT_PENDING' || !(o.payment?.linkId || o.payment?.rzpOrderId)) return o;
+  // Paid in the app (even if the app closed before telling us)?
+  if (o.payment.rzpOrderId) {
+    for (const p of await getRzpOrderPayments(o.payment.rzpOrderId)) {
+      const ok = await settledPayment(o, p).catch(() => null);
+      if (ok) return (await markRzpOrderPaid(o.payment.rzpOrderId, ok.id)) ?? o;
+    }
+  }
+  if (!o.payment.linkId) {
+    // In-app only: Razorpay Orders never expire, so our own window decides (the Checkout closed itself at the end of it;
+    // a payment that still sneaks in later is refunded automatically when its webhook arrives)
+    const over = (o.payment.expiresAt?.getTime() ?? 0) + 60_000 < Date.now();
+    return over ? cancelOrder(o._id.toString(), 'system', 'Payment was not completed in time') : o;
+  }
   const link = await getPaymentLink(o.payment.linkId);
   if (link.status === 'paid') {
     const paid = link.payments?.find((p) => p.status === 'captured') ?? link.payments?.[0];

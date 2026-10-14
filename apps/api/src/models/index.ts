@@ -168,10 +168,12 @@ const orderSchema = new Schema(
     },
     paymentMethod: { type: String, enum: ['COD', 'ONLINE'], required: true },
     paymentStatus: { type: String, enum: ['PENDING', 'PAID', 'REFUNDED', 'REFUND_FAILED'], default: 'PENDING' },
-    // Razorpay Payment Link for ONLINE orders (the customer pays on Razorpay's page)
+    // Razorpay for ONLINE orders: a Payment Link (Razorpay's page) and, once the app opens the
+    // native Checkout, a Razorpay Order. Either one being paid places the order.
     payment: {
       linkId: { type: String, default: '' },
       linkUrl: { type: String, default: '' },
+      rzpOrderId: { type: String, default: '' },
       paymentId: { type: String, default: '' },
       expiresAt: { type: Date, default: null },
       /** Where the payment result page sends the customer back to (the app's own link). */
@@ -195,6 +197,7 @@ const orderSchema = new Schema(
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ userId: 1, idempotencyKey: 1 }, { unique: true });
 orderSchema.index({ 'payment.linkId': 1 });
+orderSchema.index({ 'payment.rzpOrderId': 1 }, { partialFilterExpression: { 'payment.rzpOrderId': { $gt: '' } } });
 export const Order = mongoose.model('Order', orderSchema);
 export type OrderDoc = InferSchemaType<typeof orderSchema>;
 export type OrderInstance = InstanceType<typeof Order>;

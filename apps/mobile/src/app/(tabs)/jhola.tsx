@@ -14,7 +14,7 @@ import { Txt } from '@/components/Txt';
 import { ApiError, api, errorMessage } from '@/api/client';
 import type { Order } from '@/api/types';
 import { rupees, distance } from '@/lib/format';
-import { paymentReturnUrl } from '@/lib/payment';
+import { canPayInApp, paymentReturnUrl } from '@/lib/payment';
 import { computeBill, deliveryLine, formatHour } from '@/lib/store-config';
 import { addressLine, hasTypedAddress, isForSomeoneElse, useProfile, useSelectedAddress } from '@/state/auth';
 import { cartLines, cartTotals, useCart } from '@/state/cart';
@@ -118,8 +118,9 @@ export default function Jhola() {
             location: address.location,
           },
           paymentMethod: pay,
-          // Phones only: the web app has no app link to come back to
-          ...(pay === 'ONLINE' && Platform.OS !== 'web' && { returnUrl: paymentReturnUrl() }),
+          // Pay inside the app when this build has Razorpay's native Checkout; otherwise on Razorpay's page.
+          // Phones only get a return link: the web app has no app to come back to.
+          ...(pay === 'ONLINE' && (canPayInApp() ? { payVia: 'checkout' } : Platform.OS !== 'web' && { returnUrl: paymentReturnUrl() })),
         },
       });
       clear();

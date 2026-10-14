@@ -49,7 +49,7 @@ What you end up with:
 
 > **If Render gave the service a different address** (e.g. `chito-api-x1y2.onrender.com`), put that address in `apps/mobile/eas.json` (both `EXPO_PUBLIC_API_URL` lines) and in the admin's `.env.local` (Step 5).
 
-*Optional:* Razorpay Dashboard → Settings → Webhooks → add `https://chito-api-8js0.onrender.com/api/v1/webhooks/razorpay` with the event **payment_link.paid** and your webhook secret. Payments work without this; the webhook is a backup.
+*Recommended:* Razorpay Dashboard → Settings → Webhooks → add `https://chito-api-8js0.onrender.com/api/v1/webhooks/razorpay` with the events **payment_link.paid**, **order.paid** and **payment.captured**, and your webhook secret (the same value as `RAZORPAY_WEBHOOK_SECRET` on Render). Payments work without it, but the webhook is what catches a payment that finishes after the customer closed the app, and refunds one that arrives after the order expired.
 
 ## Step 4: Build the APK
 1. Sign up at [expo.dev](https://expo.dev).
