@@ -1,7 +1,7 @@
 // Online payment, always against a Razorpay Order made by our server (no Payment Links: test mode allows only 30, ever).
 // 1. Android with Razorpay's native module: the native Checkout opens over Chito (UPI apps open straight from it).
 // 2. Phones without it (or if it can't open): Razorpay's standard Checkout on our own in-app page (src/app/pay/[id].tsx).
-// 3. Web: Razorpay's standard Checkout opens on the page.
+// 3. Web: Razorpay's standard Checkout opens on the page, in redirect mode (the server sends the browser back).
 // Old orders that still have a Payment Link keep opening that page. Whatever happens, the server decides "paid".
 import { router } from 'expo-router';
 import * as Linking from 'expo-linking';
@@ -153,8 +153,17 @@ async function payOnWeb(order: Order): Promise<PayResult> {
   } catch {
     return { order, message: 'Could not load the payment window. Check your connection and try again.' };
   }
+  // Redirect mode: bank pages open in this tab and Razorpay posts the result to our server, which sends the browser
+  // back to this order. Pop-up mode breaks on iPhone Safari (the bank window opens after an await, so it's blocked).
+  const back = `${window.location.origin}/order/${order.id}`;
   const result = await new Promise<CheckoutSuccess | null>((resolve) => {
-    const rzp = new Razorpay({ ...checkoutConfig(r.opts), handler: (res: CheckoutSuccess) => resolve(res), modal: { ondismiss: () => resolve(null) } });
+    const rzp = new Razorpay({
+      ...checkoutConfig(r.opts),
+      redirect: true,
+      callback_url: `${r.opts.callbackUrl}?return=${encodeURIComponent(back)}`,
+      handler: (res: CheckoutSuccess) => resolve(res),
+      modal: { ondismiss: () => resolve(null) },
+    });
     rzp.open();
   });
   if (!result) return { order: await refreshPayment(order.id).catch(() => order) };

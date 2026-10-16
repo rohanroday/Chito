@@ -331,13 +331,29 @@ customer.post('/payments/razorpay/checkout-callback', async (req, res) => {
   const paid = !!order && order.paymentStatus === 'PAID' && order.status !== 'CANCELLED';
   // Failed or cancelled payments arrive with error[...] fields and no signature
   const msg = JSON.stringify({ chitoPayment: paid ? 'paid' : 'failed' });
+  // The web app passes ?return=<its order page>: send the browser back there, but only to one of our own sites
+  const back = safeReturnUrl(req.query.return);
   res.type('html').send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chito</title><style>body{margin:0;font-family:system-ui,sans-serif;background:#FBF4E6;color:#24150F;display:flex;min-height:100vh;align-items:center;justify-content:center}
 .c{background:#FFFDF7;border:1px solid #E8DCC4;border-radius:16px;padding:28px;max-width:360px;margin:16px;text-align:center}.i{font-size:48px}h1{color:#7B1E28;margin:8px 0}</style></head>
 <body><div class="c"><div class="i">${paid ? '✅' : '⚠️'}</div><h1>${paid ? 'Payment received' : 'Payment not completed'}</h1>
 <p>${paid ? `Order ${escapeHtml(order!.orderNumber)} is placed. Taking you back…` : 'No money was taken. You can try again from your order.'}</p></div>
-<script>setTimeout(function(){if(window.ReactNativeWebView){window.ReactNativeWebView.postMessage(${JSON.stringify(msg)})}},${paid ? 900 : 1500})</script></body></html>`);
+<script>setTimeout(function(){if(window.ReactNativeWebView){window.ReactNativeWebView.postMessage(${JSON.stringify(msg)})}${back ? `else{location.replace(${JSON.stringify(back).split('<').join('\\u003c')})}` : ''}},${paid ? 900 : 1500})</script></body></html>`);
 });
+
+/** Only "https://<one of our CORS sites>/order/<id>" (http for localhost), never anywhere else (no open redirect). */
+function safeReturnUrl(raw: unknown): string | null {
+  if (typeof raw !== 'string' || raw.length > 300) return null;
+  try {
+    const u = new URL(raw);
+    if (!env.corsOrigins.includes(u.origin)) return null;
+    if (u.protocol !== 'https:' && u.hostname !== 'localhost') return null;
+    if (!/^\/order\/[a-f0-9]{24}$/.test(u.pathname) || u.search || u.hash) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
 
 /** Razorpay webhook (needs a public URL in production). Raw body is required for the signature. */
 customer.post('/webhooks/razorpay', async (req, res) => {

@@ -278,7 +278,7 @@ async function main() {
   // Razorpay test mode allows only ~30 payment links a day; when that's used up, skip (the app shows a clean error)
   const razorpayLimited = on.json.error?.code === 'PAYMENT_PROVIDER_ERROR';
   if (razorpayLimited) {
-    console.log('  • skipped online-payment checks: Razorpay test mode's 30 payment links are used up (links are only for old apps now).');
+    console.log('  • skipped online-payment checks: the 30 Razorpay test-mode payment links are used up (links are only for old apps now).');
     check('payment provider down → clean error, no order left waiting', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
   } else {
   check('online order waits for payment with a Razorpay link', on.status === 201 && on.json.status === 'PAYMENT_PENDING' && /^https:\/\//.test(on.json.payment?.url ?? ''), on.json);
@@ -378,6 +378,13 @@ async function main() {
   const failedCb = await postForm({ 'error[code]': 'BAD_REQUEST_ERROR', 'error[description]': 'Payment failed' });
   check('in-app page: a failed payment shows "not completed"', failedCb.status === 200 && (await failedCb.text()).includes('Payment not completed'));
   check('…and tells the app to close the page', forgedCbHtml.includes('ReactNativeWebView') && forgedCbHtml.includes('chitoPayment'));
+  const postFormTo = (q: string) =>
+    fetch(`${API}/payments/razorpay/checkout-callback?return=${encodeURIComponent(q)}`, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: 'x=1' }).then((r) => r.text());
+  const webOrigin = env.corsOrigins.find((o) => o.startsWith('http://localhost')) ?? env.corsOrigins[0];
+  const okBack = `${webOrigin}/order/${dflt.json.id}`;
+  check('web: the result page sends the browser back to our own order page', (await postFormTo(okBack)).includes(`location.replace(${JSON.stringify(okBack)})`));
+  check('web: …never to another site (no open redirect)', !(await postFormTo(`https://evil.example/order/${dflt.json.id}`)).includes('location.replace'));
+  check('web: …nor to a different page on our site', !(await postFormTo(`${webOrigin}/login`)).includes('location.replace'));
   await call('POST', `/orders/${dflt.json.id}/cancel`, {}, ct);
   check('stock back after the in-app page tests', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
   }
