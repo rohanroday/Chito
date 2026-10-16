@@ -45,11 +45,13 @@ export function MountainPath({ order, width }: { order: Pick<Order, 'status' | '
   const cur = POINTS[Math.max(0, current)];
 
   return (
-    <View style={{ width, height: width }}>
+    // A little taller than the drawing, so "Order placed" has room under the path
+    <View style={{ width, height: width * 1.1 }}>
       <View style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
         <Mountains height={70 * scale} />
       </View>
-      <Svg width={width} height={width} viewBox="0 0 300 300">
+      {/* Absolute too, so it paints over the mountains on web as well (browsers draw positioned boxes on top) */}
+      <Svg width={width} height={width} viewBox="0 0 300 300" style={{ position: 'absolute', top: 0, left: 0 }}>
         {LEGS.map((d, i) => (
           <Path
             key={i}
@@ -77,14 +79,21 @@ export function MountainPath({ order, width }: { order: Pick<Order, 'status' | '
         const step = ORDER_STEPS[i];
         const at = timeFor(step);
         const right = p.x < 150;
+        // The first leg runs right along the bottom from "Order placed", so that label sits just under the path
+        // (above it, it would collide with "Confirmed by store" once that shows its time)
+        const top = i === 0 ? (p.y + 12) * scale : p.y * scale - 12;
         return (
           <View
             key={step}
             style={{
               position: 'absolute',
-              top: p.y * scale - 12,
+              top,
               ...(right ? { left: p.x * scale + 22 } : { right: (300 - p.x) * scale + 22 }),
               alignItems: right ? 'flex-start' : 'flex-end',
+              // A card-coloured backing keeps the words readable over the path and the mountains
+              backgroundColor: colors.card,
+              borderRadius: 6,
+              paddingHorizontal: 4,
             }}>
             <Txt variant="strong" color={failed && i === current ? colors.vermilion : i <= current ? colors.ink : colors.subtle} style={{ fontSize: 14 }}>
               {failed && i === current ? STATUS_LABEL.DELIVERY_FAILED : STATUS_LABEL[step]}
