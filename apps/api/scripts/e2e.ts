@@ -274,11 +274,11 @@ async function main() {
   const EXPO_RETURN = 'exp://192.168.1.5:8081/--/payment-return/ORDER_ID';
   const evil = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'ONLINE', returnUrl: 'https://evil.example/ORDER_ID' }, ct, { 'Idempotency-Key': key() });
   check('return link must be our app (no open redirect)', evil.status === 400, evil.json);
-  const on = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'ONLINE', returnUrl: EXPO_RETURN }, ct, { 'Idempotency-Key': key() });
+  const on = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'ONLINE', payVia: 'link', returnUrl: EXPO_RETURN }, ct, { 'Idempotency-Key': key() });
   // Razorpay test mode allows only ~30 payment links a day; when that's used up, skip (the app shows a clean error)
   const razorpayLimited = on.json.error?.code === 'PAYMENT_PROVIDER_ERROR';
   if (razorpayLimited) {
-    console.log('  • skipped online-payment checks: Razorpay test-mode limit reached (payment links). Try again tomorrow.');
+    console.log('  • skipped online-payment checks: Razorpay test mode's 30 payment links are used up (links are only for old apps now).');
     check('payment provider down → clean error, no order left waiting', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
   } else {
   check('online order waits for payment with a Razorpay link', on.status === 201 && on.json.status === 'PAYMENT_PENDING' && /^https:\/\//.test(on.json.payment?.url ?? ''), on.json);
@@ -310,7 +310,7 @@ async function main() {
   check('cancelling a paid order attempts a refund', paidCancel.json.status === 'CANCELLED' && ['REFUNDED', 'REFUND_FAILED'].includes(paidCancel.json.paymentStatus), paidCancel.json);
   check('stock restored after cancel', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
 
-  const on2 = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'ONLINE' }, ct, { 'Idempotency-Key': key() });
+  const on2 = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'ONLINE', payVia: 'link' }, ct, { 'Idempotency-Key': key() });
   const c2 = await call('POST', `/orders/${on2.json.id}/cancel`, {}, ct);
   check('customer can cancel an unpaid online order', c2.json.status === 'CANCELLED' && c2.json.paymentStatus === 'PENDING', c2.json);
   check('…and its stock is released', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
@@ -362,6 +362,24 @@ async function main() {
   check('unpaid in-app order expires → cancelled', expired3.json.status === 'CANCELLED' && expired3.json.paymentStatus === 'PENDING', expired3.json);
   check('no checkout once the order is cancelled', (await call('POST', `/orders/${on3.json.id}/payment/checkout`, {}, ct)).status === 409);
   check('stock back after the checkout tests', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
+
+  // Apps that don't say how to pay get a Razorpay Order too (Payment Links are capped at 30 in test mode)
+  const dflt = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: momAddress, paymentMethod: 'ONLINE' }, ct, { 'Idempotency-Key': key() });
+  check('online orders default to in-app Checkout (no payment link)', dflt.status === 201 && dflt.json.payment?.inApp === true && dflt.json.payment?.url === '', dflt.json);
+  const co4 = await call('POST', `/orders/${dflt.json.id}/payment/checkout`, {}, ct);
+  check('checkout tells the in-app page where Razorpay posts the result', /\/api\/v1\/payments\/razorpay\/checkout-callback$/.test(co4.json.callbackUrl ?? ''), co4.json.callbackUrl);
+  const postForm = (f: Record<string, string>) =>
+    fetch(`${API}/payments/razorpay/checkout-callback`, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(f).toString() });
+  const forgedCb = await postForm({ razorpay_order_id: co4.json.rzpOrderId, razorpay_payment_id: 'pay_e2eFake', razorpay_signature: 'deadbeef' });
+  const forgedCbHtml = await forgedCb.text();
+  check('in-app page: forged result → "not completed", order still waiting', forgedCbHtml.includes('Payment not completed') && (await Order.findById(dflt.json.id))!.status === 'PAYMENT_PENDING');
+  const signedFake = await postForm({ razorpay_order_id: co4.json.rzpOrderId, razorpay_payment_id: 'pay_e2eFake', razorpay_signature: sign(co4.json.rzpOrderId, 'pay_e2eFake') });
+  check('in-app page: signed but no such payment at Razorpay → not placed', (await signedFake.text()).includes('Payment not completed') && (await Order.findById(dflt.json.id))!.status === 'PAYMENT_PENDING');
+  const failedCb = await postForm({ 'error[code]': 'BAD_REQUEST_ERROR', 'error[description]': 'Payment failed' });
+  check('in-app page: a failed payment shows "not completed"', failedCb.status === 200 && (await failedCb.text()).includes('Payment not completed'));
+  check('…and tells the app to close the page', forgedCbHtml.includes('ReactNativeWebView') && forgedCbHtml.includes('chitoPayment'));
+  await call('POST', `/orders/${dflt.json.id}/cancel`, {}, ct);
+  check('stock back after the in-app page tests', (await Product.findById(atta._id))!.stock === attaBeforeOnline);
   }
   const badPhone = await call('POST', '/orders', { items: [{ slug: 'aashirvaad-atta', qty: 1 }], address: { ...momAddress, recipientPhone: '12345' }, paymentMethod: 'COD' }, ct, { 'Idempotency-Key': key() });
   check('invalid recipient phone rejected', badPhone.status === 400, badPhone.json);

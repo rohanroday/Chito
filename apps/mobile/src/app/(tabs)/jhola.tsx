@@ -1,7 +1,7 @@
 import { router, useFocusEffect } from 'expo-router';
 import { Banknote, Bike, Check, MapPin, Smartphone } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
-import { Platform, Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AddButton } from '@/components/AddButton';
@@ -14,7 +14,6 @@ import { Txt } from '@/components/Txt';
 import { ApiError, api, errorMessage } from '@/api/client';
 import type { Order } from '@/api/types';
 import { rupees, distance } from '@/lib/format';
-import { canPayInApp, paymentReturnUrl } from '@/lib/payment';
 import { computeBill, deliveryLine, formatHour } from '@/lib/store-config';
 import { addressLine, hasTypedAddress, isForSomeoneElse, useProfile, useSelectedAddress } from '@/state/auth';
 import { cartLines, cartTotals, useCart } from '@/state/cart';
@@ -118,9 +117,8 @@ export default function Jhola() {
             location: address.location,
           },
           paymentMethod: pay,
-          // Pay inside the app when this build has Razorpay's native Checkout; otherwise on Razorpay's page.
-          // Phones only get a return link: the web app has no app to come back to.
-          ...(pay === 'ONLINE' && (canPayInApp() ? { payVia: 'checkout' } : Platform.OS !== 'web' && { returnUrl: paymentReturnUrl() })),
+          // Online: always a Razorpay Order, paid in Razorpay Checkout inside the app (lib/payment.ts picks how)
+          ...(pay === 'ONLINE' && { payVia: 'checkout' }),
         },
       });
       clear();

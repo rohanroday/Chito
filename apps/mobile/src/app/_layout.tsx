@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { AppState, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { api } from '@/api/client';
 import { getSocket } from '@/api/socket';
@@ -90,6 +91,8 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.parchment }}>
+      {/* Keeps the field you're typing in above the keyboard (Android draws edge-to-edge, so the screen no longer resizes) */}
+      <KeyboardProvider>
       <StatusBar style={showIntro ? 'light' : 'dark'} />
       <View style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.parchment } }}>
@@ -102,6 +105,7 @@ export default function RootLayout() {
             <Stack.Screen name="addresses" />
             <Stack.Screen name="payment-return/[id]" options={{ animation: 'none' }} />
             <Stack.Screen name="map-pick" options={{ animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="pay/[id]" options={{ animation: 'slide_from_bottom', gestureEnabled: false }} />
           </Stack.Protected>
           <Stack.Protected guard={!loggedIn}>
             <Stack.Screen name="login" />
@@ -109,6 +113,7 @@ export default function RootLayout() {
         </Stack>
         {showIntro && <AnimatedSplash onDone={endIntro} />}
       </View>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }

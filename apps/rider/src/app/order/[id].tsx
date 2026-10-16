@@ -1,7 +1,8 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { CheckCircle2, ChevronLeft, MapPin, Navigation, Phone, TriangleAlert } from 'lucide-react-native';
 import { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Linking, Pressable, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { api, ApiError, errorMessage } from '@/api/client';
@@ -36,7 +37,7 @@ export default function DeliveryDetail() {
   const [failing, setFailing] = useState(false);
   const [reason, setReason] = useState('');
   const [note, setNote] = useState('');
-  const scroll = useRef<ScrollView>(null);
+  const scroll = useRef<KeyboardAwareScrollViewRef>(null);
   const codeInput = useRef<TextInput>(null);
 
   if (!o) {
@@ -84,7 +85,7 @@ export default function DeliveryDetail() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <View style={{ flex: 1 }}>
       <View style={{ backgroundColor: colors.maroon, paddingTop: insets.top + 6, paddingHorizontal: 12, paddingBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
         <Pressable onPress={close} hitSlop={12} accessibilityLabel="Back" style={{ padding: 4 }}>
           <ChevronLeft size={26} color={colors.gold} />
@@ -100,7 +101,8 @@ export default function DeliveryDetail() {
       </View>
       <DentilBorder />
 
-      <ScrollView ref={scroll} style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
+      {/* Scrolls the code / reason box above the keyboard */}
+      <KeyboardAwareScrollView ref={scroll} bottomOffset={24} style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
         {o.status === 'DELIVERED' && (
           <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', backgroundColor: colors.leaf50, borderRadius: radius.md, padding: 14 }}>
             <CheckCircle2 size={22} color={colors.leaf} />
@@ -270,7 +272,7 @@ export default function DeliveryDetail() {
             {error}
           </Txt>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {/* At the door: one tap to the code box, wherever the rider has scrolled */}
       {active && !failing && (
@@ -305,6 +307,6 @@ export default function DeliveryDetail() {
           />
         </View>
       )}
-    </KeyboardAvoidingView>
+    </View>
   );
 }

@@ -39,8 +39,15 @@ export type PaymentLink = {
   payments?: { payment_id: string; status: string }[] | null;
 };
 
+const publicBase = () => env.PUBLIC_API_URL || `http://localhost:${env.PORT}`;
+
 export function callbackUrl() {
-  return `${env.PUBLIC_API_URL || `http://localhost:${env.PORT}`}/api/v1/payments/razorpay/callback`;
+  return `${publicBase()}/api/v1/payments/razorpay/callback`;
+}
+
+/** Razorpay Checkout in redirect mode posts the signed result here. */
+export function checkoutCallbackUrl() {
+  return `${publicBase()}/api/v1/payments/razorpay/checkout-callback`;
 }
 
 export async function createPaymentLink(o: { orderNumber: string; grandTotal: number; customerName: string; customerPhone: string }) {

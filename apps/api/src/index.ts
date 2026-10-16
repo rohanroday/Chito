@@ -21,6 +21,8 @@ app.use(cors({ origin: env.corsOrigins }));
 app.use('/api/v1/webhooks/razorpay', express.raw({ type: '*/*', limit: '1mb' }));
 // Product photo uploads arrive as base64 JSON, so that one route gets a bigger limit
 app.use('/api/v1/admin/uploads', express.json({ limit: '8mb' }));
+// Razorpay Checkout (redirect mode) posts its result as a form
+app.use('/api/v1/payments/razorpay/checkout-callback', express.urlencoded({ extended: true, limit: '20kb' }));
 app.use(express.json({ limit: '200kb' }));
 
 // Opening the bare address in a browser shouldn't look like an error

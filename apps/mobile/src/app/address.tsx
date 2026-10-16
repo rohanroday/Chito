@@ -2,7 +2,8 @@ import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, CircleAlert, CircleCheck, ClipboardPaste, Link2, LocateFixed, Map as MapIcon, MapPin } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { errorMessage } from '@/api/client';
@@ -241,7 +242,7 @@ export default function AddressScreen() {
   ];
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <View style={{ flex: 1 }}>
       <View style={{ backgroundColor: colors.maroon, paddingTop: insets.top + 6, paddingHorizontal: 12, paddingBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
         {/* Leaving with a complete address keeps it — people often tap back instead of Save */}
         <Pressable onPress={valid && !busy ? save : goBack} hitSlop={12} accessibilityLabel="Back" style={{ padding: 4 }}>
@@ -253,7 +254,8 @@ export default function AddressScreen() {
       </View>
       <DentilBorder />
 
-      <ScrollView contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: insets.bottom + 32 }} keyboardShouldPersistTaps="handled">
+      {/* Scrolls the field being typed in above the keyboard */}
+      <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: insets.bottom + 32 }} keyboardShouldPersistTaps="handled">
         {/* Who receives it */}
         <View style={{ gap: 6 }}>
           <Txt variant="h2">Who will receive the order?</Txt>
@@ -414,8 +416,7 @@ export default function AddressScreen() {
             {!recipientOk ? 'Add their name and a 10-digit phone number to save.' : 'Fill in a name for this address, a landmark and the area to save.'}
           </Txt>
         )}
-      </ScrollView>
-
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }

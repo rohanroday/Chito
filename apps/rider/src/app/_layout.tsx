@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { closeSocket, getSocket } from '@/api/socket';
 import type { RiderOrder } from '@/api/types';
@@ -64,7 +65,8 @@ export default function RootLayout() {
 
   if (!ready) return null;
   return (
-    <>
+    // Keeps the field you're typing in above the keyboard (Android draws edge-to-edge, so the screen no longer resizes)
+    <KeyboardProvider>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.parchment } }}>
         <Stack.Protected guard={loggedIn}>
@@ -75,6 +77,6 @@ export default function RootLayout() {
           <Stack.Screen name="login" />
         </Stack.Protected>
       </Stack>
-    </>
+    </KeyboardProvider>
   );
 }

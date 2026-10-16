@@ -11,6 +11,7 @@ import { Admin, Category, Order, Otp, Product, Rider, User } from '../models/ind
 import { resolveSharedLocation } from '../lib/maplink.js';
 import {
   cancelOrder,
+  confirmCheckoutRedirect,
   createOrder,
   markOrderPaid,
   markRzpOrderPaid,
@@ -209,8 +210,9 @@ const orderBody = z.object({
     location: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).optional(),
   }),
   paymentMethod: z.enum(['COD', 'ONLINE']),
-  // ONLINE only: "checkout" = Razorpay's native Checkout in the Android app; "link" = Razorpay's page (web, older apps)
-  payVia: z.enum(['checkout', 'link']).default('link'),
+  // ONLINE only: "checkout" (default) = a Razorpay Order paid in Razorpay Checkout (native SDK, or the standard
+  // Checkout page). "link" = a Payment Link, kept only for apps that ask for it (test mode allows just 30 links, ever).
+  payVia: z.enum(['checkout', 'link']).default('checkout'),
   instructions: z.string().max(300).optional(),
 });
 
@@ -314,6 +316,27 @@ customer.get('/payments/razorpay/callback', async (req, res) => {
         ? resultPage(true, 'Payment received', `Order ${order!.orderNumber} is placed. The store is packing it now. 🙏`, { id: order!._id.toString(), returnUrl: order!.payment?.returnUrl })
         : resultPage(false, 'Payment not completed', 'No money was taken. You can try again from your order in the app.', order ? { id: order._id.toString(), returnUrl: order.payment?.returnUrl } : undefined),
     );
+});
+
+/**
+ * Razorpay's standard Checkout, opened on the app's in-app payment page, posts here when payment ends (redirect mode).
+ * Trust only the signature. The page tells the app (inside its WebView) to close and show the order.
+ */
+customer.post('/payments/razorpay/checkout-callback', async (req, res) => {
+  res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'");
+  const b = (req.body ?? {}) as Record<string, unknown>;
+  const str = (v: unknown) => (typeof v === 'string' ? v.slice(0, 200) : '');
+  const r = { rzpOrderId: str(b.razorpay_order_id), paymentId: str(b.razorpay_payment_id), signature: str(b.razorpay_signature) };
+  const order = r.rzpOrderId && r.paymentId && r.signature ? await confirmCheckoutRedirect(r).catch(() => null) : null;
+  const paid = !!order && order.paymentStatus === 'PAID' && order.status !== 'CANCELLED';
+  // Failed or cancelled payments arrive with error[...] fields and no signature
+  const msg = JSON.stringify({ chitoPayment: paid ? 'paid' : 'failed' });
+  res.type('html').send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chito</title><style>body{margin:0;font-family:system-ui,sans-serif;background:#FBF4E6;color:#24150F;display:flex;min-height:100vh;align-items:center;justify-content:center}
+.c{background:#FFFDF7;border:1px solid #E8DCC4;border-radius:16px;padding:28px;max-width:360px;margin:16px;text-align:center}.i{font-size:48px}h1{color:#7B1E28;margin:8px 0}</style></head>
+<body><div class="c"><div class="i">${paid ? '✅' : '⚠️'}</div><h1>${paid ? 'Payment received' : 'Payment not completed'}</h1>
+<p>${paid ? `Order ${escapeHtml(order!.orderNumber)} is placed. Taking you back…` : 'No money was taken. You can try again from your order.'}</p></div>
+<script>setTimeout(function(){if(window.ReactNativeWebView){window.ReactNativeWebView.postMessage(${JSON.stringify(msg)})}},${paid ? 900 : 1500})</script></body></html>`);
 });
 
 /** Razorpay webhook (needs a public URL in production). Raw body is required for the signature. */

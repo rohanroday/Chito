@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import { Bell, Check, ChevronRight, LogOut, MapPin, MessageCircle, Phone } from 'lucide-react-native';
 import { type ReactNode, useState } from 'react';
-import { Pressable, ScrollView, Switch, TextInput, View } from 'react-native';
+import { Pressable, Switch, TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DentilBorder, Mountains } from '@/components/ornaments';
@@ -85,7 +86,7 @@ export default function Me() {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+    <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
       <View style={{ backgroundColor: colors.maroon, paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 18, alignItems: 'center' }}>
         <View style={{ width: 72, height: 80, borderTopLeftRadius: 36, borderTopRightRadius: 36, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, backgroundColor: colors.gold, alignItems: 'center', justifyContent: 'center' }}>
           <Txt variant="display" color={colors.maroon}>
@@ -174,6 +175,6 @@ export default function Me() {
         <Mountains height={70} />
         <View style={{ height: bottomGap, backgroundColor: colors.sand }} />
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

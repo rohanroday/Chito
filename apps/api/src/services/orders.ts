@@ -10,6 +10,7 @@ import { Category, Counter, Order, type OrderInstance, Product, Rider, User } fr
 import {
   cancelPaymentLink,
   capturePayment,
+  checkoutCallbackUrl,
   createPaymentLink,
   createRzpOrder,
   getPayment,
@@ -336,8 +337,24 @@ export const markRzpOrderPaid = (rzpOrderId: string, paymentId: string) => confi
 async function settledPayment(o: OrderHydrated, p: RzpPayment) {
   if (p.order_id !== o.payment?.rzpOrderId || p.amount !== (o.bill?.grandTotal ?? 0)) return null;
   if (p.status === 'captured') return p;
-  if (p.status === 'authorized') return capturePayment(p.id, p.amount).then((c) => (c.status === 'captured' ? c : null));
+  if (p.status === 'authorized') {
+    // Razorpay may auto-capture it at the same moment, which makes our capture fail: then just read it again
+    const c = await capturePayment(p.id, p.amount).catch(() => getPayment(p.id));
+    return c.status === 'captured' ? c : null;
+  }
   return null;
+}
+
+/**
+ * Razorpay's standard Checkout (the in-app payment page) posts its signed result here when the payment is done.
+ * The signature is the proof, so no login is needed. Returns the order, or null when it can't be confirmed.
+ */
+export async function confirmCheckoutRedirect(r: { rzpOrderId: string; paymentId: string; signature: string }) {
+  const o = await Order.findOne({ 'payment.rzpOrderId': r.rzpOrderId });
+  if (!o || !verifyCheckoutSignature(r)) return null;
+  const p = await settledPayment(o, await getPayment(r.paymentId)).catch(() => null);
+  if (!p) return null;
+  return markRzpOrderPaid(r.rzpOrderId, p.id);
 }
 
 /** The app is about to open Razorpay's native Checkout: make (once) the Razorpay Order it pays. */
@@ -366,6 +383,8 @@ export async function startCheckout(orderId: string, userId: string) {
     prefill: { name: user?.name ?? '', contact: user?.phone ?? '' },
     // Razorpay closes the Checkout when our payment window ends, so nobody pays for an order we're about to drop
     timeoutSec: secondsLeft,
+    // Where the in-app payment page's Checkout posts its result (redirect mode)
+    callbackUrl: checkoutCallbackUrl(),
   };
 }
 

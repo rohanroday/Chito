@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, TextInput, useWindowDimensions, View } from 'react-native';
+import { TextInput, useWindowDimensions, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { api, errorMessage } from '@/api/client';
@@ -72,8 +73,8 @@ export default function Login() {
     });
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.maroon }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+    // Scrolls the field being typed in above the keyboard
+    <KeyboardAwareScrollView bottomOffset={24} style={{ flex: 1, backgroundColor: colors.maroon }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={{ paddingTop: insets.top + 12, alignItems: 'center' }}>
           <Txt variant="strong" color={colors.white} style={{ opacity: 0.9 }}>
             Tashi Delek 🙏
@@ -174,7 +175,6 @@ export default function Login() {
             We deliver within {store.serviceRadiusKm} km of our store · {hoursLabel(store)}
           </Txt>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }

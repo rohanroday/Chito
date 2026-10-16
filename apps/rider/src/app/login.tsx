@@ -1,6 +1,7 @@
 import { Bike, KeyRound, PackageCheck, UserPlus } from 'lucide-react-native';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { api, errorMessage } from '@/api/client';
@@ -70,7 +71,7 @@ export default function Login() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.parchment }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <View style={{ flex: 1, backgroundColor: colors.parchment }}>
       <View style={{ backgroundColor: colors.maroon, paddingTop: insets.top + 24, paddingBottom: 28, alignItems: 'center', gap: 6 }}>
         <View style={{ width: 76, height: 84, borderTopLeftRadius: 38, borderTopRightRadius: 38, borderBottomLeftRadius: 12, borderBottomRightRadius: 12, backgroundColor: colors.gold, alignItems: 'center', justifyContent: 'center' }}>
           <Bike size={40} color={colors.maroon} />
@@ -85,7 +86,8 @@ export default function Login() {
       <DentilBorder />
       <PrayerFlags height={28} />
 
-      <ScrollView contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: insets.bottom + 24 }} keyboardShouldPersistTaps="handled">
+      {/* Scrolls the field being typed in above the keyboard */}
+      <KeyboardAwareScrollView bottomOffset={24} contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: insets.bottom + 24 }} keyboardShouldPersistTaps="handled">
         {step === 'phone' ? (
           <>
             <Txt variant="h2">Your phone number</Txt>
@@ -170,7 +172,7 @@ export default function Login() {
         <Txt variant="caption" color={colors.subtle} style={{ textAlign: 'center', marginTop: 4 }}>
           Only for Chito’s own delivery riders.
         </Txt>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
