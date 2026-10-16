@@ -34,7 +34,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-maroon p-4">
       <div className="w-full max-w-sm overflow-hidden rounded-2xl bg-card shadow-xl">
         {/* eslint-disable-next-line @next/next/no-img-element -- small static logo */}
-        <img src="/logo.png" alt="Chito" className="mx-auto mt-6 h-24 w-24 rounded-2xl" />
+        <img src={`${process.env.NEXT_PUBLIC_BASE_PATH}/logo.png`} alt="Chito" className="mx-auto mt-6 h-24 w-24 rounded-2xl" />
         <div className="px-6 pb-2 pt-4 text-center">
           <h1 className="font-display text-2xl text-maroon">Store dashboard</h1>
           <p className="text-sm text-muted">Tashi Delek 🙏 Log in to manage orders</p>

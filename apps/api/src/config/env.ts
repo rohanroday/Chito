@@ -30,6 +30,9 @@ const schema = z.object({
   // Dev-only escape hatch for testing outside store hours. Ignored when NODE_ENV=production.
   // (There is deliberately no switch for the 3 km rule: it always applies.)
   DEV_IGNORE_STORE_HOURS: bool,
+  // One-container deploy (Dockerfile): folder with the built web apps (web/, admin/, rider/) that this server
+  // also serves. Empty = API only (Render).
+  WEB_DIR: z.string().optional().default(''),
 });
 
 const parsed = schema.safeParse(process.env);

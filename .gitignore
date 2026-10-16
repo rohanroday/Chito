@@ -21,3 +21,6 @@ ios/
 .DS_Store
 Thumbs.db
 *.zip
+
+# Real settings for the one-container deploy (secrets)
+chito.env

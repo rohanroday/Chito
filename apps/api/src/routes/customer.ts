@@ -341,13 +341,17 @@ customer.post('/payments/razorpay/checkout-callback', async (req, res) => {
 <script>setTimeout(function(){if(window.ReactNativeWebView){window.ReactNativeWebView.postMessage(${JSON.stringify(msg)})}${back ? `else{location.replace(${JSON.stringify(back).split('<').join('\\u003c')})}` : ''}},${paid ? 900 : 1500})</script></body></html>`);
 });
 
-/** Only "https://<one of our CORS sites>/order/<id>" (http for localhost), never anywhere else (no open redirect). */
+/**
+ * Only "https://<one of our CORS sites>/order/<id>" (http for localhost), or this server's own address when it also
+ * serves the web app (one-container deploy). Never anywhere else (no open redirect).
+ */
 function safeReturnUrl(raw: unknown): string | null {
   if (typeof raw !== 'string' || raw.length > 300) return null;
   try {
     const u = new URL(raw);
-    if (!env.corsOrigins.includes(u.origin)) return null;
-    if (u.protocol !== 'https:' && u.hostname !== 'localhost') return null;
+    const ownSite = !!env.PUBLIC_API_URL && new URL(env.PUBLIC_API_URL).origin === u.origin;
+    if (!ownSite && !env.corsOrigins.includes(u.origin)) return null;
+    if (!ownSite && u.protocol !== 'https:' && u.hostname !== 'localhost') return null;
     if (!/^\/order\/[a-f0-9]{24}$/.test(u.pathname) || u.search || u.hash) return null;
     return u.toString();
   } catch {

@@ -83,7 +83,7 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
       setSession(null);
       // Hard redirect from a non-component helper is intentional: drop all in-memory state
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-      if (typeof window !== 'undefined') window.location.href = '/login';
+      if (typeof window !== 'undefined') window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH}/login`;
     }
     const e = (json as { error?: { code: string; message: string } }).error;
     throw new ApiError(res.status, e?.code ?? 'ERROR', e?.message ?? `Request failed (${res.status})`);
@@ -91,4 +91,6 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
   return json as T;
 }
 
-export const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL ?? 'http://localhost:4000';
+// Empty (one-container deploy, see Dockerfile): the API and its socket live on the same site as this dashboard
+const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL ?? 'http://localhost:4000';
+export const SOCKET_URL = socketUrl || (typeof window !== 'undefined' ? window.location.origin : '');

@@ -228,7 +228,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col bg-maroon text-white">
           <div className="flex items-center gap-3 px-5 pb-3 pt-5">
             {/* eslint-disable-next-line @next/next/no-img-element -- small static logo */}
-            <img src="/logo.png" alt="" className="h-11 w-11 rounded-xl" />
+            <img src={`${process.env.NEXT_PUBLIC_BASE_PATH}/logo.png`} alt="" className="h-11 w-11 rounded-xl" />
             <div>
               <div className="font-display text-2xl leading-none text-gold">Chito</div>
               <div className="text-xs opacity-80">Store dashboard</div>

@@ -7,6 +7,7 @@ import { createServer } from 'node:http';
 import { env } from './config/env.js';
 import { errorHandler } from './lib/http.js';
 import { initRealtime } from './lib/realtime.js';
+import { isApiPath, mountWebApps } from './lib/web-apps.js';
 import { admin } from './routes/admin.js';
 import { customer } from './routes/customer.js';
 import { rider } from './routes/rider.js';
@@ -14,7 +15,10 @@ import { expireUnpaidOrders } from './services/orders.js';
 
 const app = express();
 app.disable('x-powered-by');
-app.use(helmet());
+// Strict security headers for the API. The web apps (one-container deploy) load their own scripts, fonts, maps and
+// Razorpay, which helmet's default content policy would block, so they are served without it.
+const apiHeaders = helmet();
+app.use((req, res, next) => (env.WEB_DIR && !isApiPath(req.path) ? next() : apiHeaders(req, res, next)));
 // Native apps send no Origin header, so they pass; browsers must be allow-listed
 app.use(cors({ origin: env.corsOrigins }));
 // Razorpay webhooks are verified against the exact raw bytes, so keep them unparsed
@@ -25,7 +29,10 @@ app.use('/api/v1/admin/uploads', express.json({ limit: '8mb' }));
 app.use('/api/v1/payments/razorpay/checkout-callback', express.urlencoded({ extended: true, limit: '20kb' }));
 app.use(express.json({ limit: '200kb' }));
 
-// Opening the bare address in a browser shouldn't look like an error
+// One-container deploy: also serve the customer web app (/), the dashboard (/admin) and the rider web app (/rider)
+const webApps = env.WEB_DIR ? mountWebApps(app, env.WEB_DIR) : [];
+
+// Opening the bare address in a browser shouldn't look like an error (when no web app is served there)
 app.get('/', (_req, res) => {
   res.json({ name: 'Chito API', ok: true, health: '/health', api: '/api/v1' });
 });
@@ -55,6 +62,7 @@ async function main() {
     console.log(`🛵 Chito API on http://localhost:${env.PORT}/api/v1 (db: ${mongoose.connection.name})`);
     if (env.OTP_DEV_MODE) console.log('   ⚠️  OTP_DEV_MODE on: OTP is always 1234');
     if (env.devIgnoreStoreHours) console.log('   ⚠️  DEV_IGNORE_STORE_HOURS on: store hours ignored');
+    if (env.WEB_DIR) console.log(`   🌐 Web apps from ${env.WEB_DIR}: ${webApps.length ? webApps.join(', ') : 'none found'}`);
   });
 }
 

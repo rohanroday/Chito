@@ -1,0 +1,20 @@
+# Keep the build small and secrets out of the image
+**/node_modules
+**/.git
+**/.expo
+**/.next
+**/out
+**/dist
+**/android
+**/ios
+**/.env
+**/.env.local
+**/.env.*.local
+apps/api/seed
+apps/api/scripts
+marketing
+*.zip
+*.apk
+*.png
+!apps/**/*.png
+**/*.log
