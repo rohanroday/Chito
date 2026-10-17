@@ -11,7 +11,7 @@ import { failureLimiter } from '../lib/rate-limit.js';
 import { emitToAdmins, emitToAll } from '../lib/realtime.js';
 import { Admin, Category, Order, Product, Rider, Store, User } from '../models/index.js';
 import { advanceOrder, assignRider, cancelOrder, serializeOrder } from '../services/orders.js';
-import { getStore, publicStore } from '../services/store.js';
+import { clearStoreCache, getStore, publicStore } from '../services/store.js';
 
 export const admin = Router();
 
@@ -457,6 +457,7 @@ admin.patch('/store', requireOwner, async (req, res) => {
   }
   const store = await Store.findOneAndUpdate({}, { ...rest, ...(location && { location: toPoint(location) }) }, { returnDocument: 'after' });
   if (!store) throw notFound('Store');
+  clearStoreCache();
   const pub = publicStore(store);
   emitToAll('store:updated', pub);
   res.json(pub);
@@ -467,6 +468,7 @@ admin.post('/store/open', async (req, res) => {
   const { isOpen, closedMessage } = parse(z.object({ isOpen: z.boolean(), closedMessage: z.string().max(160).optional() }), req.body);
   const store = await Store.findOneAndUpdate({}, { isOpen, ...(closedMessage !== undefined && { closedMessage }) }, { returnDocument: 'after' });
   if (!store) throw notFound('Store');
+  clearStoreCache();
   const pub = publicStore(store);
   emitToAll('store:updated', pub);
   res.json(pub);

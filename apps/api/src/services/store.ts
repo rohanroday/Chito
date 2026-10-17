@@ -3,10 +3,23 @@ import { fromPoint, haversineKm, type LatLng, round1 } from '../lib/geo.js';
 import { HttpError } from '../lib/http.js';
 import { Store, type StoreDoc } from '../models/index.js';
 
+// The store settings are read by almost every request but change only when the owner saves them.
+// Keep them for a few seconds (one database round trip saved per request); saving clears the copy at once.
+const STORE_CACHE_MS = 10_000;
+let cached: { store: NonNullable<Awaited<ReturnType<typeof loadStore>>>; at: number } | null = null;
+const loadStore = () => Store.findOne();
+
 export async function getStore() {
-  const store = await Store.findOne();
+  if (cached && Date.now() - cached.at < STORE_CACHE_MS) return cached.store;
+  const store = await loadStore();
   if (!store) throw new HttpError(503, 'STORE_NOT_SET_UP', 'Store is not set up yet. Run the seed script.');
+  cached = { store, at: Date.now() };
   return store;
+}
+
+/** Call after changing the store settings, so the next request reads them fresh. */
+export function clearStoreCache() {
+  cached = null;
 }
 
 const toMinutes = (hhmm: string) => {

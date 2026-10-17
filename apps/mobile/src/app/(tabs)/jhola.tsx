@@ -123,7 +123,7 @@ export default function Jhola() {
       });
       clear();
       setIdemKey(newKey());
-      // Online: the order screen opens Razorpay right away (on web it waits for a tap: pop-ups need one)
+      // Online: the order screen opens Razorpay right away, on every platform
       router.push({ pathname: '/order/[id]', params: { id: order.id, fresh: '1', ...(order.status === 'PAYMENT_PENDING' && { pay: '1' }) } });
     } catch (e) {
       setError(errorMessage(e));

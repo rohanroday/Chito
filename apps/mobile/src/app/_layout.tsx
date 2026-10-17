@@ -5,7 +5,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import { AppState, View } from 'react-native';
+import { AppState, Platform, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
@@ -20,6 +20,23 @@ import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
+/**
+ * The gompa intro plays when the app starts. On the web, a reload, a direct link (an order page) or the return from
+ * Razorpay also "starts" the app, so there it plays only on the first visit of the browser session, from the home page.
+ */
+function shouldPlayIntro() {
+  if (Platform.OS !== 'web') return true;
+  try {
+    const path = window.location.pathname;
+    if (path !== '/' && path !== '/login') return false;
+    if (window.sessionStorage.getItem('chito-intro-seen')) return false;
+    window.sessionStorage.setItem('chito-intro-seen', '1');
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     YatraOne_400Regular,
@@ -32,8 +49,10 @@ export default function RootLayout() {
   const profileHydrated = useProfile((s) => s.hydrated);
   const hydrated = sessionHydrated && profileHydrated;
   const loggedIn = useAuth((s) => !!s.phone);
-  const [showIntro, setShowIntro] = useState(true);
-  const ready = (fontsLoaded || !!fontError) && hydrated;
+  const [showIntro, setShowIntro] = useState(shouldPlayIntro);
+  // Web: show the app straight away in the fallback font while ~0.9 MB of fonts download (slow 4G = seconds);
+  // the text switches to Mukta / Yatra One when they arrive. Phones load fonts from the app itself, so wait there.
+  const ready = (fontsLoaded || !!fontError || Platform.OS === 'web') && hydrated;
 
   useEffect(() => {
     // Hand over from the native maroon splash to the animated gompa splash

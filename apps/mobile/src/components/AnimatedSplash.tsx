@@ -20,7 +20,7 @@ import { MonasteryScene } from './MonasteryScene';
 import { DentilBorder } from './ornaments';
 import { Txt } from './Txt';
 
-const SHOW_MS = 2600;
+const SHOW_MS = 1500; // short: it plays on every app start
 const FADE_MS = 450;
 
 /** In-app splash shown after the native (maroon + logo) splash: the gompa at dawn. */

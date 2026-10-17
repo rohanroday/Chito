@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, Phone, Smartphone } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,7 +14,7 @@ import { MountainPath } from '@/components/MountainPath';
 import { DentilBorder, PrayerFlags } from '@/components/ornaments';
 import { Txt } from '@/components/Txt';
 import { distance, rupees } from '@/lib/format';
-import { openPayment, refreshPayment } from '@/lib/payment';
+import { openPayment, preloadCheckout, refreshPayment } from '@/lib/payment';
 import { kmBetween } from '@/lib/pin';
 import { callSupport } from '@/lib/support';
 import { useStoreInfo } from '@/state/catalog';
@@ -68,13 +68,18 @@ export default function OrderTracking() {
 
   useEffect(() => {
     let alive = true;
+    // Straight from the Jhola: fetch Razorpay's checkout script while the order loads, so it opens without a wait
+    if (payNow === '1') preloadCheckout();
     api<Order>(`/orders/${id}`)
       .then(async (o) => {
         if (!alive) return;
         receive(o);
-        // Straight from the Jhola: open Razorpay once (in-app Checkout, or the phone's browser that closes itself)
-        if (payNow === '1' && o.status === 'PAYMENT_PENDING' && Platform.OS !== 'web' && !autoPaid.current) {
+        // Straight from the Jhola: open Razorpay once, on every platform (the web uses redirect mode, so no pop-up
+        // needs a tap). This screen stays as the fallback: retry, "I've paid · check again", and the hold time.
+        if (payNow === '1' && o.status === 'PAYMENT_PENDING' && !autoPaid.current) {
           autoPaid.current = true;
+          // A reload of this page must not open Razorpay again
+          router.setParams({ pay: '' });
           setPaying(true);
           const after = await openPayment(o);
           if (alive) {

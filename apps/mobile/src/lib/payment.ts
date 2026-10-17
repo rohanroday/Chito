@@ -132,16 +132,28 @@ async function payNative(order: Order, checkout: Checkout): Promise<PayResult> {
 // ── Web: Razorpay's standard Checkout script on the page ──
 type RazorpayWeb = new (o: Record<string, unknown>) => { open: () => void; on: (e: string, cb: (r: unknown) => void) => void };
 
+let scriptLoad: Promise<RazorpayWeb> | null = null;
+
 function loadCheckoutScript(): Promise<RazorpayWeb> {
   const w = window as unknown as { Razorpay?: RazorpayWeb };
   if (w.Razorpay) return Promise.resolve(w.Razorpay);
-  return new Promise((resolve, reject) => {
+  // One download, shared by the early preload and the actual payment
+  scriptLoad ??= new Promise<RazorpayWeb>((resolve, reject) => {
     const s = document.createElement('script');
     s.src = 'https://checkout.razorpay.com/v1/checkout.js';
     s.onload = () => (w.Razorpay ? resolve(w.Razorpay) : reject(new Error('Razorpay did not load')));
     s.onerror = () => reject(new Error('Razorpay did not load'));
     document.head.appendChild(s);
+  }).catch((e: unknown) => {
+    scriptLoad = null; // let a later tap try again
+    throw e;
   });
+  return scriptLoad;
+}
+
+/** Web: start downloading Razorpay's checkout early (e.g. while the order loads), so it opens without a wait. */
+export function preloadCheckout() {
+  if (Platform.OS === 'web') loadCheckoutScript().catch(() => undefined);
 }
 
 async function payOnWeb(order: Order): Promise<PayResult> {
