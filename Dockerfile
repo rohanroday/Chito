@@ -11,7 +11,8 @@
 #
 # Secrets are never baked in: they are passed as environment variables when the container starts.
 
-ARG NODE_VERSION=22.12.0
+# Same major version as local development: its npm (11) wrote the package-lock files, and npm 10 rejects them
+ARG NODE_VERSION=24.11.1
 
 # ── Shared base for the build stages ──
 FROM node:${NODE_VERSION}-bookworm-slim AS base
