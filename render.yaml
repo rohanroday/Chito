@@ -54,3 +54,52 @@ services:
       - key: IMAGEKIT_FOLDER
         value: /chito
       # PUBLIC_API_URL is not needed: the server uses Render's own https address for Razorpay's return page
+
+  # Same API in SINGAPORE (Render's closest region to Sikkim; it has no India region).
+  # A service can't change region after it is created, so this is a second service. Once the apps,
+  # admin and Razorpay webhook point at it, delete the "chito-api" block above and that service on Render.
+  # Keep the two blocks identical apart from name and region.
+  - type: web
+    name: chito-api-sg
+    region: singapore
+    runtime: node
+    plan: free
+    rootDir: apps/api
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22.12.0"
+      # DEMO: OTP is always 1234 (see the notes on the block above)
+      - key: NODE_ENV
+        value: development
+      - key: OTP_DEV_MODE
+        value: "true"
+      - key: DEV_IGNORE_STORE_HOURS
+        value: "true"
+      - key: CORS_ORIGINS
+        value: http://localhost:3000,http://localhost:8081,http://localhost:8082,https://chito-blush.vercel.app,https://chito-mobile.vercel.app,https://chito-rider.vercel.app
+      - key: TZ
+        value: Asia/Kolkata
+      # Secrets: paste the same values as the old service (Render dashboard → chito-api → Environment)
+      - key: MONGODB_URI
+        sync: false
+      # Paste the OLD service's two JWT secrets so nobody is logged out by the move
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: IMAGEKIT_URL_ENDPOINT
+        sync: false
+      - key: IMAGEKIT_PRIVATE_KEY
+        sync: false
+      - key: IMAGEKIT_FOLDER
+        value: /chito
