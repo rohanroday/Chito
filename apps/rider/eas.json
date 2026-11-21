@@ -10,7 +10,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://chito-api-8js0.onrender.com/api/v1",
+        "EXPO_PUBLIC_API_URL": "https://chito-api-sg.onrender.com/api/v1",
         "EXPO_PUBLIC_SUPPORT_PHONE": "+917908195961",
         "ORG_GRADLE_PROJECT_reactNativeArchitectures": "arm64-v8a,armeabi-v7a"
       }
@@ -21,7 +21,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://chito-api-8js0.onrender.com/api/v1",
+        "EXPO_PUBLIC_API_URL": "https://chito-api-sg.onrender.com/api/v1",
         "EXPO_PUBLIC_SUPPORT_PHONE": "+917908195961"
       }
     }
